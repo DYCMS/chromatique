@@ -6,7 +6,7 @@ Un jeu solo inspiré du Mastermind, sans dépendance, compte, suivi, serveur app
 
 ## Jouer et reprendre le projet
 
-Décompresser le dossier et ouvrir `index.html` par double-clic. Garder `styles.css`, `game.js` et `app.js` à côté. Sélectionner une case, puis une couleur ; la palette passe automatiquement à la prochaine case vide. Les listes de chaque case permettent aussi de modifier une proposition. Valider pour obtenir les deux indices.
+Décompresser le dossier et ouvrir `index.html` par double-clic. Garder `styles.css`, `game.js`, `extensions.js` et `app.js` à côté. Sélectionner une case, puis une couleur ; la palette passe automatiquement à la prochaine case vide. Les listes de chaque case permettent aussi de modifier une proposition. Valider pour obtenir les deux indices.
 
 Au clavier, utiliser Tab, Entrée ou Espace ; dans les listes, les flèches choisissent une couleur. Aucun téléchargement n’est nécessaire pour jouer après récupération des fichiers. Pas de PWA ni de cache de service worker : la version publiée n’offre pas de garantie hors ligne.
 
@@ -42,7 +42,7 @@ Les **statistiques** présentent, séparément pour chaque mode, victoires, déf
 
 Ces données sont stockées dans `localStorage` dans ce navigateur, avec une limite globale de **100 parties terminées** ; les statistiques portent sur ce même ensemble. Aucun compte, nom ou serveur n’intervient. Le bouton d’effacement demande confirmation. Les abandons et les parties avec `?test=1` sont exclus. Si le stockage est indisponible, un message l’indique et les données restent en mémoire jusqu’à fermeture de la page. Les parties en cours ne sont pas sauvegardées.
 
-**Vérifications de la version :** 37 tests automatiques (moteur, solveur, chronomètre, stockage et interface avec DOM simulé). Ils couvrent notamment les occurrences répétées, six parties représentatives du joueur automatique, la séparation des modes, l’absence de doublons, la relecture des archives, le stockage bloqué, l’exclusion des tests et l’arrêt des actions programmées. Le workflow GitHub exécute aussi `tests/browser.cjs` avec Chromium avant de publier : contrôles visibles, confirmation, clavier, affichage mobile et toucher émulés, aide et démonstration automatique. Les résultats effectifs se trouvent dans GitHub Actions. Un téléphone réel reste à essayer.
+**Vérifications de la version :** 37 tests automatiques (moteur, solveur, chronomètre, stockage et interface avec DOM simulé). Ils couvrent notamment les occurrences répétées, six parties représentatives du joueur automatique, la séparation des modes, l’absence de doublons, la relecture des archives, le stockage bloqué, l’exclusion des tests et l’arrêt des actions programmées. Le workflow GitHub exécute aussi `tests/browser.cjs` avec Chromium avant de publier : contrôles visibles, confirmation, clavier, affichage mobile et toucher émulés, aide et démonstration automatique. Le 02/11/2026, les 37 tests, la suite Chromium (clavier et toucher émulé compris) et le déploiement ont tous réussi : https://github.com/DYCMS/chromatique/actions/runs/41431002118. Un téléphone réel reste à essayer.
 
 La version classique précédente est sauvegardée sous le tag GitHub `v1.0.2`. La branche `extensions` conserve le travail de cette évolution.
 
