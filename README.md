@@ -1,152 +1,80 @@
-# Chromatique — Le code secret
+# Chromatique — Remise J1
 
-**Version 1.1.1 · Règles `code-couleurs-1.0` · API provisoire `provisional-1`.**
+Version du jeu : **1.1.1** · Dossier préparé le **2 novembre 2026** pour J1, le **20 novembre 2026 au soir** (heure exacte sur Cyberlearn).
 
-Un jeu solo inspiré du Mastermind, sans dépendance, compte, suivi, serveur applicatif ni service d’IA intégré. Les couleurs sont toujours accompagnées d’un nom ou d’un symbole.
+- **Dépôt :** https://github.com/DYCMS/chromatique
+- **Application :** https://dycms.github.io/chromatique/
+- **Code publié repris dans cette archive :** [commit `2d85d825`](https://github.com/DYCMS/chromatique/tree/2d85d825f5b562c34831b49c767bfac8ad68ec17).
+- **Version de la remise :** tag Git `jalon-1`, inclus dans `historique.git.bundle`. Il désigne le jeu ci-dessus et ce README actualisé. Ce tag est local à l’archive : il n’est pas encore publié sur GitHub.
 
-## Jouer et reprendre le projet
+Le fichier `historique.git.bundle` mentionné ci-dessous est fourni dans le ZIP de remise Cyberlearn, pas dans les fichiers du dépôt en ligne.
 
-Décompresser le dossier et ouvrir `index.html` par double-clic. Garder `styles.css`, `game.js`, `extensions.js` et `app.js` à côté. Sélectionner une case, puis une couleur ; la palette passe automatiquement à la prochaine case vide. Les listes de chaque case permettent aussi de modifier une proposition. Valider pour obtenir les deux indices.
+## 1. Jouer et reprendre le projet
 
-Au clavier, utiliser Tab, Entrée ou Espace ; dans les listes, les flèches choisissent une couleur. Aucun téléchargement n’est nécessaire pour jouer après récupération des fichiers. Pas de PWA ni de cache de service worker : la version publiée n’offre pas de garantie hors ligne.
+Ouvrir `index.html` par double-clic, en conservant les autres fichiers à côté. Aucun serveur ni téléchargement n’est nécessaire pour jouer. Le mode Classique est choisi au départ. Les modes Assisté et Automatique sont des extensions séparées.
 
-Pour vérifier la logique, avec Node.js 18 ou plus :
+`game.js` contient le moteur, `app.js` les commandes et l’affichage, `extensions.js` les aides et les statistiques, et `styles.css` la présentation. Les tests sont dans `tests/` et la publication dans `.github/workflows/pages.yml`.
+
+Pour reprendre l’historique Git inclus :
 
 ```sh
+git clone historique.git.bundle chromatique-source
+cd chromatique-source
+git checkout jalon-1
 npm test
 ```
 
-Aucune installation de paquet n’est nécessaire pour ces tests. `game.js` contient le moteur et l’API provisoire ; `app.js` relie ce moteur aux commandes visibles ; `styles.css` définit l’apparence. Les tests sont dans `tests/`.
+Node.js 18 ou plus est nécessaire pour les tests, pas pour jouer. Le bundle contient aussi le prototype initial et la correction CSS de départ. Les évolutions publiées ensuite se consultent dans l’historique GitHub ; le commit de préparation J1 importe leur état vérifié, sans reconstruire leur historique distant.
 
-## Message de fin (version 1.0.1)
+## 2. Règles et source
 
-Un encadré affiche **Victoire !** avec le nombre d’essais, ou **Partie perdue** après dix propositions incorrectes. À la fin, le focus et la vue se déplacent sur cet encadré, qui propose aussi Nouvelle partie. Le redémarrage masque le résultat et efface son texte. Les tests d’interface vérifient son apparition, le blocage des propositions et sa disparition au redémarrage avec un DOM simulé.
+Source : **Projet — Code secret en couleurs, inspiré du Mastermind**, édition 2.1, mise à jour du 28/10/2026, annexe **code-couleurs-1.0**. Les règles du cours font foi.
 
-## Lisibilité et redémarrage (version 1.0.2)
+Le programme tire quatre couleurs parmi rouge, bleu, vert, jaune, orange et violet. Les répétitions sont possibles et le code reste fixe. Chaque proposition valide consomme un des dix essais. Une proposition invalide est refusée sans modifier la partie. Les indices comptent d’abord les couleurs bien placées, puis les mal placées parmi les occurrences restantes : une occurrence ne compte qu’une fois. Quatre bien placées donnent la victoire, même au dixième essai. Sinon, dix essais donnent une défaite. Après la fin, les propositions sont bloquées. « Nouvelle partie » tire un code et efface essais, indices et historique de la partie.
 
-Chaque ligne de l’historique affiche « Bien placées » et « Mal placées » sous ses nombres. Une consigne indique la case sélectionnée et suit les clics sur la palette ou les cases et le focus des listes. Le titre du secret devient « Code trouvé ! » après une victoire, ou « Le code secret était… » après une défaite.
+## 3. Une décision prise avec Codex
 
-Après au moins un essai valide dans une partie encore en cours, les boutons de redémarrage demandent « Abandonner cette partie et recommencer ? ». Annuler conserve la partie, les indices, la proposition en cours et la sélection. Après une fin de partie ou avant le premier essai valide, le redémarrage est immédiat. L’API de test garde son redémarrage direct, sans dialogue.
+Le choix principal a été de garder **un seul moteur pour l’interface et l’API de test**. Sans cela, les tests pourraient réussir sur une logique différente de celle utilisée à l’écran. Ici, une proposition envoyée par l’API met aussi à jour les essais, les indices et le résultat visibles. Cette décision est vérifiée dans `tests/core.test.cjs` et `tests/interface.test.cjs`.
 
-Vérification de cette version : 25 tests automatiques (14 moteur/API et 11 avec DOM simulé), dont les libellés, la sélection, les titres et les deux réponses à la confirmation. La suite de navigateur a aussi été complétée, mais son exécution dans un navigateur réel reste à effectuer.
+Codex a aidé à écrire le code, les tests et les corrections. Le jeu ne fait appel à aucun service d’IA. L’aide et le joueur automatique utilisent seulement les propositions précédentes et leurs indices. Les couleurs portent aussi un nom ou un symbole. Les statistiques restent locales et sont séparées par mode.
 
-## Correction de la version 1.1.1
+## 4. Correction expliquée et preuves avant/après
 
-Les commandes automatiques sont maintenant placées juste sous le choix du mode, avant la zone de saisie. Le focus arrive sur « Démarrer la démonstration » et la consigne explique comment lancer la partie. Le test navigateur contrôle aussi ce placement, le coup unique, la pause, la reprise et les commandes tactiles. Les 38 tests locaux passent ; la vérification Chromium est exécutée par GitHub avant publication.
+**Problème :** en mode automatique, les cases de saisie étaient désactivées mais les boutons de lancement se trouvaient sous le formulaire. Il était donc difficile de comprendre comment commencer.
 
-## Extensions (version 1.1.0)
+- **Avant :** dans [l’ancienne version de `index.html`](https://github.com/DYCMS/chromatique/blob/29f78cddb3293c4f3196784e4998710f40086dce/index.html), la section `automatic-panel` suit le formulaire de proposition.
+- **Après :** dans [la version corrigée](https://github.com/DYCMS/chromatique/blob/2d85d825f5b562c34831b49c767bfac8ad68ec17/index.html), elle suit directement le choix du mode, avant la grille du jeu. La consigne indique comment lancer la démonstration et le focus arrive sur son bouton.
+- **Même situation à vérifier :** sélectionner Automatique sans avoir joué. Attendu : commandes repérables avant la saisie, puis premier essai au clic. Obtenu après correction : conforme dans Chromium. Le placement et le focus sont contrôlés dans `tests/browser.cjs` ; la consigne et le premier coup sont aussi contrôlés dans `tests/interface.test.cjs`.
 
-Le mode **Classique** reste sélectionné par défaut et conserve les règles communes. Le mode **Assisté** propose un bouton d’analyse et permet de préremplir une suggestion, que la personne choisit de valider. Le mode **Automatique** est une démonstration : jouer un coup, démarrer ou mettre en pause. Un changement de mode redémarre la partie, avec confirmation après au moins un essai valide.
+Le premier test de pause employait un code trouvé dès le deuxième coup : il tentait de mettre en pause une partie déjà gagnée. Le scénario a été corrigé avec un code demandant plusieurs coups, en conservant les vérifications de pause et de reprise. Le [premier contrôle en échec](https://github.com/DYCMS/chromatique/actions/runs/41434100907) et le [contrôle corrigé réussi](https://github.com/DYCMS/chromatique/actions/runs/41434485862) restent consultables. Le déploiement a été bloqué tant que le contrôle échouait.
 
-Le solveur de `extensions.js` reçoit uniquement l’historique des propositions et les indices. Il filtre les 1 296 codes possibles et cherche une proposition qui départage les candidats restants (recherche sur au plus 48 propositions candidates). Il ne consulte jamais le secret de la partie ; aucun service d’IA ni clé API n’est utilisé. Sa réussite dans tous les cas en dix coups n’est pas garantie.
+## 5. Premiers tests : attendu et obtenu
 
-Le **chronomètre** mesure le temps écoulé depuis le début de la partie, y compris le temps passé dans un autre onglet ou une pause du joueur automatique. Il se fige à la fin et repart à zéro à la nouvelle partie. Il n’impose aucune limite.
+**38 tests automatiques réussis**, relancés sur les sources de cette archive. La [vérification GitHub du 02/11/2026](https://github.com/DYCMS/chromatique/actions/runs/41434485862) confirme aussi la réussite des tests, de Chromium et du déploiement. Les preuves sont les tests du projet et cette exécution ; aucun rapport séparé n’est ajouté.
 
-Les **statistiques** présentent, séparément pour chaque mode, victoires, défaites, taux de réussite et moyenne des essais des victoires. L’**historique des parties terminées** conserve le résultat, la durée, le code révélé et tous les essais avec leurs indices. On peut le filtrer par mode et ouvrir chaque partie pour revoir ses essais.
+| Essai | Résultat attendu | Obtenu | Preuve |
+|---|---|---|---|
+| Secret rouge/bleu/vert/jaune ; proposition rouge/vert/bleu/orange | 1 bien placée, 2 mal placées | Conforme | `tests/core.test.cjs` |
+| Secret rouge/rouge/bleu/vert ; quatre rouges proposés | 2 bien placées, 0 mal placée | Conforme | `tests/core.test.cjs` |
+| Proposition incomplète ou couleur inconnue | Refus expliqué, compteur et historique inchangés | Conforme | `tests/core.test.cjs`, `tests/interface.test.cjs` |
+| Neuf erreurs puis le bon code | Victoire au dixième essai | Conforme | `tests/core.test.cjs`, `tests/browser.cjs` |
+| Dix erreurs puis une nouvelle proposition | Défaite ; aucun changement après la fin | Conforme | `tests/core.test.cjs`, `tests/interface.test.cjs` |
+| Nouvelle partie | Historique vide, zéro essai, secret caché | Conforme | `tests/interface.test.cjs` |
+| Automatique : un coup, pause, reprise | Un seul coup sur demande, arrêt pendant la pause, puis poursuite jusqu’à la fin | Conforme | `tests/browser.cjs` |
 
-Ces données sont stockées dans `localStorage` dans ce navigateur, avec une limite globale de **100 parties terminées** ; les statistiques portent sur ce même ensemble. Aucun compte, nom ou serveur n’intervient. Le bouton d’effacement demande confirmation. Les abandons et les parties avec `?test=1` sont exclus. Si le stockage est indisponible, un message l’indique et les données restent en mémoire jusqu’à fermeture de la page. Les parties en cours ne sont pas sauvegardées.
-
-**Vérifications de la version :** 37 tests automatiques (moteur, solveur, chronomètre, stockage et interface avec DOM simulé). Ils couvrent notamment les occurrences répétées, six parties représentatives du joueur automatique, la séparation des modes, l’absence de doublons, la relecture des archives, le stockage bloqué, l’exclusion des tests et l’arrêt des actions programmées. Le workflow GitHub exécute aussi `tests/browser.cjs` avec Chromium avant de publier : contrôles visibles, confirmation, clavier, affichage mobile et toucher émulés, aide et démonstration automatique. Le 02/11/2026, les 37 tests, la suite Chromium (clavier et toucher émulé compris) et le déploiement ont tous réussi : https://github.com/DYCMS/chromatique/actions/runs/41431002118. Un téléphone réel reste à essayer.
-
-La version classique précédente est sauvegardée sous le tag GitHub `v1.0.2`. La branche `extensions` conserve le travail de cette évolution.
-
-## Règles et source
-
-Source : annexe du document de cours **Projet — Code secret en couleurs, inspiré du Mastermind**, édition 2.1, mise à jour du 28/10/2026. Les règles du cours font foi.
-
-Le secret contient quatre couleurs, tirées parmi `rouge`, `bleu`, `vert`, `jaune`, `orange`, `violet`, avec répétitions possibles. Il reste fixe et caché pendant la partie. Chaque proposition valide compte pour un des dix essais ; une proposition invalide ne change pas la partie. Les bien placées sont comptées d’abord, puis les mal placées parmi les occurrences restantes. Les nombres ne désignent aucune position. Quatre bien placées donnent la victoire, y compris au dixième essai. Sinon, dix propositions donnent une défaite. Après la fin, les propositions sont bloquées ; Nouvelle partie efface tout et tire un code. Le secret est révélé à la fin pour permettre de comprendre le résultat.
-
-## Choix faits avec Codex
-
-Codex a produit le code et les tests à partir des consignes. Une décision centrale est de garder **un seul moteur pour l’interface et l’API**, afin d’éviter un jeu visible et un jeu de test qui réagiraient différemment. Les notifications du moteur mettent à jour l’historique, les indices et le résultat après une action provenant de l’un ou de l’autre.
-
-Le comptage utilise les occurrences restantes plutôt que « cette couleur existe-t-elle dans le secret ? ». Ce choix évite de compter plusieurs fois le même rouge. L’interface emploie à la fois la couleur, un symbole et un nom. Aucun outil d’IA n’intervient pendant une partie.
-
-Ces décisions sont documentées pour pouvoir être expliquées et discutées ; leur présence ici ne remplace pas la compréhension personnelle du projet.
-
-## Vérifications effectuées
-
-Exécution le **02/11/2026** : **21 tests automatiques réussis** (`npm test`). Les 14 tests du moteur/API s’exécutent réellement dans Node.js ; les 7 tests d’interface exécutent `app.js` avec un **DOM simulé**, et ne prouvent ni le rendu CSS ni le fonctionnement d’un navigateur réel.
-
-| Vérification | Résultat attendu avant exécution | Obtenu |
-| --- | --- | --- |
-| Secret rouge/bleu/vert/jaune ; proposition rouge/vert/bleu/orange | 1 bien placée, 2 mal placées | Conforme |
-| Secret rouge/rouge/bleu/vert ; proposition quatre rouges | 2 bien placées, 0 mal placée | Conforme |
-| Proposition incomplète, couleur inconnue, tableau creux | Refus explicite ; historique et compteur inchangés | Conforme |
-| Neuf propositions incorrectes puis le secret | Victoire au dixième essai | Conforme |
-| Dix propositions incorrectes | Défaite, dix lignes conservées, secret révélé | Conforme |
-| Proposition après victoire ou défaite | Refus, état inchangé | Conforme |
-| Nouvelle partie | Zéro essai, historique vide, secret caché, commandes réactivées | Conforme |
-| Proposition envoyée par l’API | Même historique et mêmes indices dans l’interface | Conforme en DOM simulé |
-| Comptage avec répétitions | Accord avec un second calcul indépendant | Conforme sur 5 184 couples secret/proposition |
-
-Les tests vérifient aussi le tirage des six couleurs, les répétitions et la protection des copies de l’état public contre les modifications externes.
-
-### Correction conservée : couleurs du secret révélé
-
-**Avant**, commit `aee8b2c` : `.secret-pegs>span` imposait un fond gris aux quatre emplacements. Ce sélecteur a une priorité supérieure à `.peg`, qui donne la couleur au pion. Lors de la révélation, le nom et le symbole auraient été corrects, mais le fond serait resté gris. Défaut constaté par analyse de la cascade CSS, sans capture de navigateur.
-
-**Après**, version `v1.0.0` : les dimensions restent communes ; le fond gris est limité à `.secret-pegs>span:not(.peg)`. Les pions révélés prennent donc leurs variables de couleur. Les 21 tests ont été relancés après le changement. Le test d’interface confirme que le pion rouge reçoit `--color: #c73c40`. La vérification de la couleur réellement calculée est prévue dans `tests/browser.cjs` ; elle reste à exécuter dans un vrai navigateur.
-
-Pour cette vérification facultative :
+Les tests avec DOM simulé vérifient la logique de l’interface. Chromium complète cette vérification avec le rendu CSS, le clavier et un écran de 375 px avec toucher émulé. Pour relancer cette dernière suite :
 
 ```sh
-npm install --no-save --package-lock=false playwright
+npm install --no-save --package-lock=false playwright@1.62.1
 npx playwright install chromium
 node tests/browser.cjs
 ```
 
-Ce script vérifie les commandes visibles, les indices, l’état partagé avec l’API, la victoire au dixième essai, le clavier, le fond rouge révélé et une largeur mobile de 375 px avec toucher émulé. **Il n’a pas pu être exécuté ici** : Chromium est absent et son téléchargement est bloqué. Une émulation mobile ne remplace pas un essai sur un téléphone réel.
+## 6. Limites et questions ouvertes
 
-## API de test — provisoire, contrat 0.2 manquant
+- **API commune 0.2 :** le contrat détaillé n’a pas été fourni. L’API actuelle `window.codeSecret` est provisoire ; sa conformité n’est pas établie. Il faut obtenir le contrat, adapter l’API et vérifier l’application publiée avant J2. Le mode `?test=1` permet d’imposer un secret avec `newGame({secret:[...]})` ; `submit([...])` envoie une proposition et `getState()` lit l’état.
+- **Smartphone réel :** le toucher et la petite largeur ont été émulés ; aucun appareil réel n’est documenté. Quel appareil et quel navigateur serviront à cette vérification ?
+- **Extensions :** le solveur a été testé sur plusieurs parties, sans garantie exhaustive de victoire en dix coups. Les parties en cours ne sont pas sauvegardées. Les statistiques concernent les 100 dernières parties terminées de ce navigateur.
+- **Avant remise :** relire ce README, vérifier personnellement les deux liens et publier le tag `jalon-1` avec le README actualisé. Pour reprendre exactement ce dossier dans le dépôt, le bundle contient le commit et le tag de remise ; ne pas remplacer un tag existant sans vérifier sa cible.
 
-Le PDF exige une API 0.2 mais ne définit ni son nom global, ni ses fonctions, ni ses retours. Aucun modèle de cours n’a été fourni. **La conformité au contrat 0.2 n’est donc pas établie.** L’adaptation devra être faite après réception de ce contrat ; les règles du jeu restent indépendantes de cet adaptateur.
-
-L’API actuelle est `window.codeSecret`. Sur l’application ouverte avec `?test=1` (par exemple `index.html?test=1`), elle permet d’imposer un secret. Un bandeau signale ce mode. En mode normal, imposer un secret est refusé. Le secret demeure caché dans l’état public jusqu’à la fin.
-
-```js
-codeSecret.newGame({ secret: ['rouge', 'rouge', 'bleu', 'vert'] });
-codeSecret.submit(['rouge', 'rouge', 'rouge', 'rouge']);
-// { ok: true, feedback: { wellPlaced: 2, misplaced: 0 }, state: ... }
-codeSecret.getState();
-codeSecret.newGame(); // nouveau tirage aléatoire
-```
-
-| Fonction | Retour |
-| --- | --- |
-| `newGame(options?)` | `{ok, state}` ou `{ok:false, error, state}` |
-| `submit(array)` | `{ok, feedback, state}` ou `{ok:false, error, state}` |
-| `getState()` | État copié : `status`, `attemptsUsed`, `attemptsRemaining`, `history`, `secret`, `palette`, `version`, `rules`, `maxAttempts` |
-
-`status` vaut `playing`, `won` ou `lost`. Chaque ligne d’historique contient `attempt`, `guess`, `wellPlaced`, `misplaced`. `secret` vaut `null` pendant la partie, puis contient le code révélé. Les identifiants de couleurs sont exactement ceux de l’annexe, dans l’ordre requis. Les tests actuels concernent cette API provisoire, pas le contrat 0.2.
-
-## Publication GitHub Pages et versions
-
-**Dépôt :** https://github.com/DYCMS/chromatique
-
-**Adresse du jeu :** https://dycms.github.io/chromatique/
-
-GitHub est connecté et la source Pages est configurée sur GitHub Actions. Le premier déploiement a réussi le 02/11/2026 ; les tests ont également réussi sur GitHub. L’accès au site depuis un navigateur réel reste à vérifier. Le workflow `.github/workflows/pages.yml` lance les tests et ne publie que les quatre fichiers du jeu.
-
-Les prochains envois sur la branche `main` déclenchent automatiquement les tests et la publication. Les résultats se consultent dans l’onglet **Actions** du dépôt. L’adresse effective est confirmée par le déploiement GitHub Pages. Ne pas publier de conversation, de document personnel, de vidéo ou de clé d’accès.
-
-Les versions locales sont conservées dans `historique.git.bundle`, joint à l’archive. Pour les reprendre :
-
-```sh
-git clone historique.git.bundle chromatique-source
-```
-
-Le tag `jalon-1` repère cette première version vérifiée mais incomplète ; `v1.0.0` identifie la version logicielle. **Aucun tag `final` n’a été créé**, car la publication, le contrat 0.2 et les vérifications personnelles ne sont pas encore terminés. Le bundle est une sauvegarde des sources et de l’historique local, pas une publication sur GitHub.
-
-## Ce qui reste à faire pour les rendus
-
-- [ ] Fournir le contrat 0.2, adapter l’API et exécuter les tests de conformité sur l’application publiée.
-- [x] Confirmer la réussite du premier déploiement GitHub Pages.
-- [ ] Ouvrir le jeu à l’adresse indiquée et vérifier son fonctionnement dans un navigateur.
-- [ ] Vérifier l’affichage et le clavier dans un navigateur réel ; exécuter `tests/browser.cjs` si possible.
-- [ ] Essayer sur un téléphone réel : noter l’appareil, le navigateur et le résultat ici.
-- [ ] Essayer le jeu d’un camarade et écrire quelques lignes de retour personnel.
-- [ ] Enregistrer la capsule avec sa propre voix et sa compréhension du projet, puis la remettre sur Cyberlearn, jamais dans GitHub public.
-- [ ] Après ces vérifications, créer et pousser le tag `final`.
-
-Pour la capsule : montrer une partie, démontrer le cas des répétitions, expliquer un test et la correction CSS, puis justifier le moteur partagé et signaler une limite réelle. Les retours personnels, l’essai du camarade, l’appareil utilisé et la vidéo ne sont pas inventés par Codex.
+Cette remise J1 peut donc encore être améliorée, en particulier sur l’API du cours et l’essai sur téléphone réel. Elle ne contient ni conversation, ni vidéo, ni retour personnel inventé. La capsule et le retour sur le jeu d’un camarade concernent J2.
