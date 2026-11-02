@@ -70,11 +70,17 @@ npx playwright install chromium
 node tests/browser.cjs
 ```
 
+### Essai sur un smartphone réel
+
+Retour communiqué par l’auteur le **02/11/2026**, après ses essais sur un **Huawei (modèle exact non précisé)**, avec **Google, DuckDuckGo et Firefox** (noms indiqués par l’auteur).
+
+L’affichage, le choix des couleurs, la validation des propositions, le bouton « Nouvelle partie » et le mode automatique ont donné les résultats attendus. Aucun problème n’a été signalé sur ces points. Il s’agit d’un essai manuel réalisé par l’auteur, distinct des tests automatisés et de l’émulation tactile. Les versions du système et des navigateurs ainsi que la date exacte des essais n’ont pas été précisées.
+
 ## 6. Limites et questions ouvertes
 
 - **API commune 0.2 :** le contrat détaillé n’a pas été fourni. L’API actuelle `window.codeSecret` est provisoire ; sa conformité n’est pas établie. Il faut obtenir le contrat, adapter l’API et vérifier l’application publiée avant J2. Le mode `?test=1` permet d’imposer un secret avec `newGame({secret:[...]})` ; `submit([...])` envoie une proposition et `getState()` lit l’état.
-- **Smartphone réel :** le toucher et la petite largeur ont été émulés ; aucun appareil réel n’est documenté. Quel appareil et quel navigateur serviront à cette vérification ?
+- **Portée de l’essai mobile :** les cinq comportements décrits ci-dessus ont été vérifiés sur le Huawei de l’auteur. Cela ne garantit pas le fonctionnement sur tous les téléphones ; le modèle exact et les versions des navigateurs restent à préciser.
 - **Extensions :** le solveur a été testé sur plusieurs parties, sans garantie exhaustive de victoire en dix coups. Les parties en cours ne sont pas sauvegardées. Les statistiques concernent les 100 dernières parties terminées de ce navigateur.
 - **Avant remise :** relire ce README, vérifier personnellement les deux liens et publier le tag `jalon-1` avec le README actualisé. Pour reprendre exactement ce dossier dans le dépôt, le bundle contient le commit et le tag de remise ; ne pas remplacer un tag existant sans vérifier sa cible.
 
-Cette remise J1 peut donc encore être améliorée, en particulier sur l’API du cours et l’essai sur téléphone réel. Elle ne contient ni conversation, ni vidéo, ni retour personnel inventé. La capsule et le retour sur le jeu d’un camarade concernent J2.
+Cette remise J1 peut donc encore être améliorée, en particulier sur la conformité à l’API du cours. Elle ne contient ni conversation, ni vidéo, ni retour personnel inventé. La capsule et le retour sur le jeu d’un camarade concernent J2.
