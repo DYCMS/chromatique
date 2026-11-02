@@ -1,6 +1,6 @@
 # Chromatique — Le code secret
 
-**Version 1.0.2 · Règles `code-couleurs-1.0` · API provisoire `provisional-1`.**
+**Version 1.1.0 · Règles `code-couleurs-1.0` · API provisoire `provisional-1`.**
 
 Un jeu solo inspiré du Mastermind, sans dépendance, compte, suivi, serveur applicatif ni service d’IA intégré. Les couleurs sont toujours accompagnées d’un nom ou d’un symbole.
 
@@ -29,6 +29,22 @@ Chaque ligne de l’historique affiche « Bien placées » et « Mal placées »
 Après au moins un essai valide dans une partie encore en cours, les boutons de redémarrage demandent « Abandonner cette partie et recommencer ? ». Annuler conserve la partie, les indices, la proposition en cours et la sélection. Après une fin de partie ou avant le premier essai valide, le redémarrage est immédiat. L’API de test garde son redémarrage direct, sans dialogue.
 
 Vérification de cette version : 25 tests automatiques (14 moteur/API et 11 avec DOM simulé), dont les libellés, la sélection, les titres et les deux réponses à la confirmation. La suite de navigateur a aussi été complétée, mais son exécution dans un navigateur réel reste à effectuer.
+
+## Extensions (version 1.1.0)
+
+Le mode **Classique** reste sélectionné par défaut et conserve les règles communes. Le mode **Assisté** propose un bouton d’analyse et permet de préremplir une suggestion, que la personne choisit de valider. Le mode **Automatique** est une démonstration : jouer un coup, démarrer ou mettre en pause. Un changement de mode redémarre la partie, avec confirmation après au moins un essai valide.
+
+Le solveur de `extensions.js` reçoit uniquement l’historique des propositions et les indices. Il filtre les 1 296 codes possibles et cherche une proposition qui départage les candidats restants (recherche sur au plus 48 propositions candidates). Il ne consulte jamais le secret de la partie ; aucun service d’IA ni clé API n’est utilisé. Sa réussite dans tous les cas en dix coups n’est pas garantie.
+
+Le **chronomètre** mesure le temps écoulé depuis le début de la partie, y compris le temps passé dans un autre onglet ou une pause du joueur automatique. Il se fige à la fin et repart à zéro à la nouvelle partie. Il n’impose aucune limite.
+
+Les **statistiques** présentent, séparément pour chaque mode, victoires, défaites, taux de réussite et moyenne des essais des victoires. L’**historique des parties terminées** conserve le résultat, la durée, le code révélé et tous les essais avec leurs indices. On peut le filtrer par mode et ouvrir chaque partie pour revoir ses essais.
+
+Ces données sont stockées dans `localStorage` dans ce navigateur, avec une limite globale de **100 parties terminées** ; les statistiques portent sur ce même ensemble. Aucun compte, nom ou serveur n’intervient. Le bouton d’effacement demande confirmation. Les abandons et les parties avec `?test=1` sont exclus. Si le stockage est indisponible, un message l’indique et les données restent en mémoire jusqu’à fermeture de la page. Les parties en cours ne sont pas sauvegardées.
+
+**Vérifications de la version :** 37 tests automatiques (moteur, solveur, chronomètre, stockage et interface avec DOM simulé). Ils couvrent notamment les occurrences répétées, six parties représentatives du joueur automatique, la séparation des modes, l’absence de doublons, la relecture des archives, le stockage bloqué, l’exclusion des tests et l’arrêt des actions programmées. Le workflow GitHub exécute aussi `tests/browser.cjs` avec Chromium avant de publier : contrôles visibles, confirmation, clavier, affichage mobile et toucher émulés, aide et démonstration automatique. Les résultats effectifs se trouvent dans GitHub Actions. Un téléphone réel reste à essayer.
+
+La version classique précédente est sauvegardée sous le tag GitHub `v1.0.2`. La branche `extensions` conserve le travail de cette évolution.
 
 ## Règles et source
 

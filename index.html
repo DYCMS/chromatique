@@ -8,11 +8,12 @@
   <title>Chromatique — Le code secret</title>
   <link rel="stylesheet" href="styles.css">
   <script defer src="game.js"></script>
+  <script defer src="extensions.js"></script>
   <script defer src="app.js"></script>
 </head>
 <body>
   <a class="skip-link" href="#proposal">Aller à ma proposition</a>
-  <header class="site-header"><a class="brand" href="./index.html" aria-label="Chromatique, accueil"><span class="brand-icon" aria-hidden="true">◈</span> CHROMATIQUE</a><span class="edition">LE CODE SECRET · v1.0.2</span></header>
+  <header class="site-header"><a class="brand" href="./index.html" aria-label="Chromatique, accueil"><span class="brand-icon" aria-hidden="true">◈</span> CHROMATIQUE</a><span class="edition">LE CODE SECRET · v1.1.0</span></header>
   <main>
     <section class="intro" aria-labelledby="title">
       <div><p class="eyebrow">Un peu de couleur. Beaucoup de logique.</p><h1 id="title">À vous de<br><em>percer le code.</em></h1><p class="intro-copy">Quatre couleurs cachées. Dix essais pour les retrouver.<br>Observez les indices, ajustez, et faites la lumière.</p></div>
@@ -23,6 +24,11 @@
       <span id="result-icon" class="result-icon" aria-hidden="true">✓</span>
       <div class="result-copy"><p class="eyebrow">Partie terminée</p><h2 id="result-title"></h2><p id="result-message"></p></div>
       <button id="result-new-game" class="primary" type="button">Nouvelle partie <span aria-hidden="true">↻</span></button>
+    </section>
+    <section class="mode-bar" aria-label="Mode de jeu et chronomètre">
+      <div><label for="game-mode">Mode de jeu</label><select id="game-mode"><option value="classic">Classique</option><option value="assisted">Assisté</option><option value="automatic">Automatique · Démonstration</option></select></div>
+      <p id="mode-description">Classique : à vous de déduire le code, sans aide.</p>
+      <div class="clock"><span>Temps de la partie</span><output id="elapsed" aria-label="Durée de la partie">00:00</output></div>
     </section>
     <div class="game-layout">
       <section class="play-panel" aria-labelledby="proposal-title">
@@ -35,6 +41,19 @@
           <p id="error" class="error" role="alert" aria-atomic="true"></p>
           <button class="primary" id="validate" type="submit">Valider ma proposition <span aria-hidden="true">↗</span></button>
         </form>
+        <section id="assistant-panel" class="assistant-panel" aria-labelledby="assistant-title" hidden>
+          <h3 id="assistant-title">Aide à la déduction</h3>
+          <p>L’aide utilise uniquement vos essais et leurs indices.</p>
+          <button type="button" id="get-hint" class="new-game">Analyser les indices</button>
+          <button type="button" id="use-hint" class="new-game" disabled>Utiliser la proposition suggérée</button>
+        </section>
+        <section id="automatic-panel" class="assistant-panel" aria-labelledby="automatic-title" hidden>
+          <h3 id="automatic-title">Le programme joue</h3>
+          <p>Un algorithme local déduit ses coups des indices, sans consulter le secret.</p>
+          <button type="button" id="auto-toggle" class="new-game">Démarrer la démonstration</button>
+          <button type="button" id="auto-step" class="new-game">Jouer un coup</button>
+        </section>
+        <p id="deduction-message" class="deduction-message" role="status" aria-live="polite"></p>
         <button class="new-game" id="new-game" type="button"><span aria-hidden="true">↻</span> Nouvelle partie</button>
       </section>
       <section class="history-panel" aria-labelledby="history-title">
@@ -51,6 +70,15 @@
         <p class="keyboard-note">Au clavier : Tab pour naviguer, Entrée ou Espace pour choisir. Les listes de couleur de chaque case fonctionnent aussi avec les flèches.</p>
       </section>
     </div>
+    <section class="records-panel" aria-labelledby="stats-title">
+      <div class="panel-heading"><div><p class="eyebrow">Vos parties dans ce navigateur</p><h2 id="stats-title">Statistiques & historique</h2></div><button id="clear-records" type="button" class="new-game">Effacer les données</button></div>
+      <p id="storage-message" class="storage-message"></p>
+      <div id="stats-grid" class="stats-grid"></div>
+      <div class="archive-header"><h3>Parties terminées</h3><label for="archive-filter">Afficher <select id="archive-filter"><option value="all">Tous les modes</option><option value="classic">Classique</option><option value="assisted">Assisté</option><option value="automatic">Automatique</option></select></label></div>
+      <p id="archive-empty" class="input-tip">Vos parties terminées apparaîtront ici.</p>
+      <div id="game-archive"></div>
+      <p class="input-tip">Les statistiques portent sur les 100 dernières parties terminées, tous modes confondus. Les abandons et les parties de test ne sont pas comptés. Aucune donnée n’est envoyée à un serveur.</p>
+    </section>
   </main>
   <footer><span>Un jeu solo inspiré du Mastermind.</span><span>Règles code-couleurs-1.0 · Sans compte ni suivi</span></footer>
   <noscript><div class="noscript">Ce jeu nécessite JavaScript. Activez-le dans votre navigateur, puis rechargez la page.</div></noscript>

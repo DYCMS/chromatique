@@ -20,10 +20,16 @@ jobs:
           node-version: '22'
       - name: Tester le moteur et l’API provisoire
         run: npm test
+      - name: Installer le navigateur pour les tests
+        run: |
+          npm install --no-save --package-lock=false playwright@1.62.1
+          npx playwright install --with-deps chromium
+      - name: Vérifier le jeu dans Chromium et sur écran tactile émulé
+        run: node tests/browser.cjs
       - name: Préparer uniquement les fichiers publics
         run: |
           mkdir -p _site
-          cp index.html styles.css game.js app.js _site/
+          cp index.html styles.css game.js extensions.js app.js _site/
           touch _site/.nojekyll
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3

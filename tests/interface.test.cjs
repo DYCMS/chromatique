@@ -5,6 +5,7 @@ const vm=require('node:vm');
 const fs=require('node:fs');
 const path=require('node:path');
 const engine=require('../game.js');
+const extensions=require('../extensions.js');
 class Element {
   constructor(tag='div') {
     this.tagName=tag.toUpperCase(); this.children=[]; this.attributes={}; this.listeners={};
@@ -28,17 +29,18 @@ class Element {
   click(){if(!this.disabled)this.dispatch('click');}
   focus(){this.focused=true;this.dispatch('focus');}
 }
-function setup(testMode=true, { confirmAnswer=true }={}){
+function setup(testMode=true, { confirmAnswer=true, storage=null }={}){
   const html=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8');
   const elements={}; for(const match of html.matchAll(/<([a-z0-9-]+)[^>]*\bid="([^"]+)"/gi))elements[match[2]]=new Element(match[1]);
   const document={getElementById:id=>elements[id],createElement:tag=>new Element(tag),createTextNode:text=>Object.assign(new Element('#text'),{textContent:text})};
   const confirmations=[];
-  const window={confirm:message=>{confirmations.push(message);return confirmAnswer;}};
-  vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../app.js'),'utf8'),{document,window,CodeSecretEngine:engine,URLSearchParams,location:{search:testMode?'?test=1':''}});
+  const pending=new Map();let nextTimer=1;
+  const window={localStorage:storage,confirm:message=>{confirmations.push(message);return confirmAnswer;},setTimeout:fn=>{const id=nextTimer++;pending.set(id,fn);return id;},clearTimeout:id=>pending.delete(id)};
+  vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../app.js'),'utf8'),{document,window,CodeSecretEngine:engine,CodeSecretExtensions:extensions,URLSearchParams,location:{search:testMode?'?test=1':''}});
   const api=window.codeSecret;
   const fill=guess=>guess.forEach((value,i)=>{const select=elements.slots.children[i].children[2];select.value=value;select.dispatch('change');});
   const submit=()=>elements.proposal.dispatch('submit');
-  return {elements,api,fill,submit,confirmations};
+  return {elements,api,fill,submit,confirmations,pending,runTimer(){const entry=pending.entries().next().value;if(entry){pending.delete(entry[0]);entry[1]();}}};
 }
 const secret=['rouge','bleu','vert','jaune'];
 const wrong=Array(4).fill('violet');
@@ -157,4 +159,47 @@ test('interface : confirmer abandonne la partie ; avant le premier essai aucun d
   assert.equal(e.secret.textContent,'????');
   assert.equal(e['palette-prompt'].textContent,'Choisissez la couleur de la case 1');
   assert.ok(e.slots.children.every(slot=>slot.children[2].value===''));
+});
+
+function chooseMode(e,mode){e['game-mode'].value=mode;e['game-mode'].dispatch('change');}
+test('extensions visibles : classique sans aide ; assistance activable sans consommer un essai',()=>{
+  const {elements:e,api,submit}=setup();
+  assert.equal(e['assistant-panel'].hidden,true);assert.equal(e['automatic-panel'].hidden,true);
+  chooseMode(e,'assisted');assert.equal(e['assistant-panel'].hidden,false);
+  e['get-hint'].click();assert.match(e['deduction-message'].textContent,/Premier essai/);
+  assert.equal(api.getState().attemptsUsed,0);e['use-hint'].click();submit();
+  assert.deepEqual(api.getState().history[0].guess,['rouge','rouge','bleu','bleu']);
+  assert.equal(e['use-hint'].disabled,true);
+});
+test('automatique : coup unique, pause, redémarrage et API arrêtent les actions programmées',()=>{
+  const {elements:e,api,pending,runTimer}=setup();
+  chooseMode(e,'automatic');assert.equal(e['automatic-panel'].hidden,false);assert.equal(e.validate.disabled,true);
+  api.newGame({secret});e['auto-step'].click();assert.equal(api.getState().attemptsUsed,1);
+  e['auto-toggle'].click();assert.equal(pending.size,1);
+  e['auto-toggle'].click();assert.equal(pending.size,0);
+  const count=api.getState().attemptsUsed;runTimer();assert.equal(api.getState().attemptsUsed,count);
+  e['auto-toggle'].click();api.newGame({secret});assert.equal(pending.size,0);
+  e['auto-toggle'].click();
+  for(let i=0;i<10&&pending.size;i++)runTimer();
+  assert.equal(api.getState().status,'won');assert.equal(pending.size,0);
+});
+test('changer de mode : annulation conserve mode et partie ; parties de test non archivées',()=>{
+  const {elements:e,api,confirmations}=setup(true,{confirmAnswer:false});
+  api.newGame({secret});api.submit(wrong);chooseMode(e,'assisted');
+  assert.equal(e['game-mode'].value,'classic');assert.equal(api.getState().attemptsUsed,1);
+  assert.equal(e['assistant-panel'].hidden,true);assert.equal(confirmations.length,1);
+  api.submit(secret);assert.equal(e['game-archive'].children.length,0);
+});
+test('statistiques/historique visibles, séparés et rechargeables ; effacement confirmé',()=>{
+  const data={};const storage={getItem:k=>data[k]||null,setItem:(k,v)=>data[k]=v};
+  const {elements:e,api}=setup(false,{storage});
+  // Une proposition du premier essai ne révèle pas le secret : tester le moteur partagé avec un code connu en mode normal par l’historique sauvegardé.
+  const seed={mode:'assisted',status:'won',finishedAt:1000,durationMs:65000,secret,history:[{guess:secret,wellPlaced:4,misplaced:0}]};
+  storage.setItem(extensions.STORAGE_KEY,JSON.stringify([seed]));
+  const other=setup(false,{storage}),ui=other.elements;
+  assert.equal(ui['game-archive'].children.length,1);
+  assert.match(ui['stats-grid'].children[1].textContent,/1 victoire/);
+  ui['archive-filter'].value='classic';ui['archive-filter'].dispatch('change');assert.equal(ui['game-archive'].children.length,0);
+  ui['clear-records'].click();assert.equal(JSON.parse(storage.getItem(extensions.STORAGE_KEY)).length,0);
+  assert.equal(ui['game-archive'].children.length,0);
 });

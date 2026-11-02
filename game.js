@@ -5,7 +5,7 @@
   else root.CodeSecretEngine = engine;
 })(typeof globalThis !== 'undefined' ? globalThis : this, function () {
   'use strict';
-  const VERSION = '1.0.2';
+  const VERSION = '1.1.0';
   const PALETTE = Object.freeze(['rouge', 'bleu', 'vert', 'jaune', 'orange', 'violet']);
   const MAX_ATTEMPTS = 10;
 

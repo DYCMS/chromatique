@@ -107,3 +107,41 @@ footer { display:flex; justify-content:space-between; gap:12px; border-top:1px s
 .history-row { flex-wrap:wrap; row-gap:12px; }
 .feedback { margin-left:auto; }
 #palette-prompt { font-weight:700; color:var(--ink); }
+
+.mode-bar { display:flex; gap:22px; align-items:center; margin:0 0 24px; border:1px solid var(--line); border-radius:14px; padding:18px 22px; background:#fdfcf7; }
+.mode-bar label,.clock>span { display:block; font-size:11px; margin-bottom:6px; color:var(--muted); }
+.mode-bar select,.archive-header select { background:var(--paper); color:var(--ink); border:1px solid #a5b09e; border-radius:7px; padding:10px; font:inherit; font-size:13px; max-width:100%; }
+.mode-bar>p { flex:1; font-size:12px; line-height:1.7; }
+.clock { min-width:100px; }
+.clock output { font-size:26px; font-weight:700; font-variant-numeric:tabular-nums; }
+.assistant-panel { margin-top:18px; padding:15px; border:1px solid #c3d0ad; border-radius:10px; background:#edf2e2; }
+.assistant-panel h3 { font-size:14px; margin:0 0 8px; }
+.assistant-panel p,.deduction-message { font-size:12px; line-height:1.7; }
+.deduction-message:empty { display:none; }
+.new-game:disabled { opacity:.5; }
+.records-panel { margin-top:28px; border:1px solid var(--line); padding:24px; border-radius:18px; background:#fdfcf7; }
+.records-panel .eyebrow { margin-bottom:8px; }
+.records-panel .panel-heading>.new-game { width:auto; margin:0; padding:10px 14px; }
+.storage-message { color:var(--muted); font-size:12px; line-height:1.7; }
+.stats-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; margin:20px 0; }
+.stat-card { background:#eef1e4; border:1px solid var(--line); padding:18px; border-radius:12px; }
+.stat-card h3 { margin:0 0 14px; font-size:16px; }
+.stat-card p { font-size:12px; line-height:1.7; }
+.stat-card strong { font-size:19px; }
+.archive-header { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.archive-header h3 { font-size:15px; }
+.archive-header label { font-size:12px; }
+.archived-game { border-top:1px solid var(--line); padding:15px 0; font-size:12px; line-height:1.8; }
+.archived-game summary { cursor:pointer; font-weight:650; overflow-wrap:anywhere; }
+.archived-game ol { padding-left:22px; }
+@media(max-width:650px) {
+  .mode-bar { flex-wrap:wrap; padding:16px; gap:12px; }
+  .mode-bar>div:first-child { flex:1; min-width:170px; }
+  .mode-bar>p { order:3; flex-basis:100%; margin:0; }
+  .clock { min-width:75px; }
+  .clock output { font-size:23px; }
+  .stats-grid { grid-template-columns:1fr; }
+  .records-panel { padding:18px; }
+  .records-panel .panel-heading { align-items:flex-start; flex-wrap:wrap; }
+  .archive-header { align-items:flex-start; flex-direction:column; }
+}
