@@ -1,6 +1,6 @@
 # Chromatique — Le code secret
 
-**Version 1.0.0 · Règles `code-couleurs-1.0` · API provisoire `provisional-1`.**
+**Version 1.0.1 · Règles `code-couleurs-1.0` · API provisoire `provisional-1`.**
 
 Un jeu solo inspiré du Mastermind, sans dépendance, compte, suivi, serveur applicatif ni service d’IA intégré. Les couleurs sont toujours accompagnées d’un nom ou d’un symbole.
 
@@ -17,6 +17,10 @@ npm test
 ```
 
 Aucune installation de paquet n’est nécessaire pour ces tests. `game.js` contient le moteur et l’API provisoire ; `app.js` relie ce moteur aux commandes visibles ; `styles.css` définit l’apparence. Les tests sont dans `tests/`.
+
+## Message de fin (version 1.0.1)
+
+Un encadré affiche **Victoire !** avec le nombre d’essais, ou **Partie perdue** après dix propositions incorrectes. À la fin, le focus et la vue se déplacent sur cet encadré, qui propose aussi Nouvelle partie. Le redémarrage masque le résultat et efface son texte. Les tests d’interface vérifient son apparition, le blocage des propositions et sa disparition au redémarrage avec un DOM simulé.
 
 ## Règles et source
 

@@ -46,6 +46,7 @@ test('interface : quatre cases vides, six choix, historique vide et secret cach�
   assert.equal(e.slots.children.length,4);assert.equal(e.palette.children.length,6);
   assert.equal(e.secret.textContent,'????');assert.equal(e.history.children.length,0);
   assert.equal(api.getState().attemptsUsed,0);assert.equal(e['test-banner'].hidden,false);
+  assert.equal(e.result.hidden,true);
 });
 test('interface : proposition incomplète refusée avec message sans consommer un essai',()=>{
   const {elements:e,api,submit}=setup();submit();
@@ -72,19 +73,26 @@ test('interface : victoire au dixième, résultat, secret révélé et commandes
   const {elements:e,api,fill,submit}=setup();api.newGame({secret});
   for(let i=0;i<9;i++){fill(wrong);submit();}fill(secret);submit();
   assert.match(e.status.textContent,/gagné en 10 essais/);assert.equal(e.history.children.length,10);
+  assert.equal(e.result.hidden,false); assert.equal(e['result-title'].textContent,'Victoire !');
+  assert.match(e['result-message'].textContent,/trouvé le code en 10 essais/); assert.equal(e.result.focused,true);
   assert.equal(e.validate.disabled,true);assert.equal(e['palette-fieldset'].disabled,true);
   assert.ok(e.slots.children.every(s=>s.children[1].disabled&&s.children[2].disabled));
   assert.equal(e.secret.children[0].style.getPropertyValue('--color'),'#c73c40');
   assert.equal(e.secret.attributes['aria-label'],'Code secret : rouge, bleu, vert, jaune');
   const before=api.getState();submit();e.palette.children[0].click();assert.deepEqual(api.getState(),before);
+  e['result-new-game'].click(); assert.equal(e.result.hidden,true); assert.equal(e['result-title'].textContent,'');
+  assert.equal(e['result-message'].textContent,''); assert.equal(api.getState().attemptsUsed,0);
 });
 test('interface : défaite après dix propositions puis nouvelle partie complète',()=>{
   const {elements:e,api,fill,submit}=setup();api.newGame({secret});
   for(let i=0;i<10;i++){fill(wrong);submit();}
   assert.match(e.status.textContent,/dix essais sont écoulés/);assert.equal(api.getState().status,'lost');
+  assert.equal(e.result.hidden,false); assert.equal(e['result-title'].textContent,'Partie perdue');
+  assert.match(e['result-message'].textContent,/10 essais/);
   e['new-game'].click();assert.equal(api.getState().status,'playing');
   assert.equal(e.secret.textContent,'????');assert.equal(e.history.children.length,0);
   assert.equal(e.validate.disabled,false);assert.equal(e.error.textContent,'');
+  assert.equal(e.result.hidden,true); assert.equal(e['result-title'].textContent,'');
   assert.ok(e.slots.children.every(s=>s.children[2].value===''));
   assert.equal(e.slots.children[0].children[1].focused,true);
 });

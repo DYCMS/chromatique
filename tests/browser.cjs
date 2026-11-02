@@ -30,11 +30,14 @@ const {chromium}=require('playwright');
       codeSecret.submit(['rouge','bleu','vert','jaune']);
     });
     assert.match(await page.locator('#status').textContent(),/gagné en 10 essais/);
+    assert.equal(await page.locator('#result').isVisible(),true);
+    assert.equal(await page.locator('#result-title').textContent(),'Victoire !');
     assert.equal(await page.locator('#validate').isDisabled(),true);
     assert.equal(await page.locator('#secret .peg').first().evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(199, 60, 64)');
     assert.deepEqual(await page.locator('#secret .peg').evaluateAll(els=>els.map(el=>el.textContent)),['R','B','V','J']);
     await page.locator('#new-game').click();
     assert.equal(await page.locator('.history-row').count(),0);
+    assert.equal(await page.locator('#result').isVisible(),false);
     // Parcours clavier : focus rendu à la première case puis Tab vers sa liste.
     await page.keyboard.press('Tab');
     assert.equal(await page.evaluate(()=>document.activeElement.id),'color-0');

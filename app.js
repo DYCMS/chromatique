@@ -16,6 +16,7 @@
   let draft = ['', '', '', ''];
   let selected = 0;
   let renderedAttempts = 0;
+  let previousStatus = 'playing';
 
   function applyColor(element, id) {
     const color = COLORS.find(c => c.id === id);
@@ -128,13 +129,29 @@
       $('secret-caption').textContent = 'Les répétitions sont possibles.';
     }
     updateDraft();
+    const ended = state.status !== 'playing';
+    $('result').hidden = !ended;
+    $('result').classList.toggle('victory', state.status === 'won');
+    $('result').classList.toggle('defeat', state.status === 'lost');
+    $('result-icon').textContent = state.status === 'won' ? '✓' : '×';
+    $('result-title').textContent = ended ? (state.status === 'won' ? 'Victoire !' : 'Partie perdue') : '';
+    $('result-message').textContent = !ended ? '' : state.status === 'won'
+      ? `Bravo ! Vous avez trouvé le code en ${state.attemptsUsed} essai${state.attemptsUsed > 1 ? 's' : ''}. Lancez une nouvelle partie pour rejouer.`
+      : 'Les 10 essais sont écoulés. Le code secret est dévoilé ci-dessus. Lancez une nouvelle partie pour retenter votre chance.';
+    if (ended && previousStatus === 'playing') {
+      $('result').focus();
+      if (typeof $('result').scrollIntoView === 'function') $('result').scrollIntoView({ block:'center', behavior:'instant' });
+    }
+    previousStatus = state.status;
   }
   $('proposal').addEventListener('submit', event => {
     event.preventDefault();
     const result = api.submit([...draft]);
     if (!result.ok) $('error').textContent = result.error;
   });
-  $('new-game').addEventListener('click', () => { api.newGame(); slots[0].button.focus(); });
+  function restart() { api.newGame(); slots[0].button.focus(); }
+  $('new-game').addEventListener('click', restart);
+  $('result-new-game').addEventListener('click', restart);
   $('test-banner').hidden = !testMode;
   game.subscribe(render);
   render(api.getState());
