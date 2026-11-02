@@ -76,7 +76,7 @@ const {chromium}=require('playwright');
     await page.locator('#game-mode').selectOption('automatic');
     assert.equal(await page.locator('#auto-toggle').evaluate(el=>document.activeElement===el),true);
     assert.ok(await page.locator('#automatic-panel').evaluate(el=>el.getBoundingClientRect().bottom <= document.querySelector('.game-layout').getBoundingClientRect().top));
-    await page.evaluate(()=>codeSecret.newGame({secret:['rouge','rouge','bleu','vert']}));
+    await page.evaluate(()=>codeSecret.newGame({secret:['violet','orange','vert','jaune']}));
     assert.equal(await page.locator('#validate').isDisabled(),true);
     await page.locator('#auto-step').click();
     assert.equal(await page.evaluate(()=>codeSecret.getState().attemptsUsed),1);
