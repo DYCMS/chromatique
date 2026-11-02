@@ -135,7 +135,9 @@
     $('attempt-label').textContent = state.status === 'playing' ? `Essai ${state.attemptsUsed + 1} / 10` : 'Partie terminée';
     if (state.status === 'won') $('status').textContent = `Code trouvé ! Vous avez gagné en ${state.attemptsUsed} essai${state.attemptsUsed > 1 ? 's' : ''}.`;
     else if (state.status === 'lost') $('status').textContent = 'Les dix essais sont écoulés. Le code est dévoilé : retentez votre chance !';
-    else if (state.attemptsUsed === 0) $('status').textContent = 'Choisissez vos quatre couleurs.';
+    else if (state.attemptsUsed === 0) $('status').textContent = mode === 'automatic'
+      ? 'Cliquez sur « Démarrer la démonstration » ou « Jouer un coup » dans le panneau ci-dessus.'
+      : 'Choisissez vos quatre couleurs.';
     else {
       const last = state.history[state.history.length - 1];
       $('status').textContent = `Essai ${last.attempt} : ${last.wellPlaced} bien placées, ${last.misplaced} mal placées. ${state.attemptsRemaining} essai${state.attemptsRemaining > 1 ? 's' : ''} restant${state.attemptsRemaining > 1 ? 's' : ''}.`;
@@ -181,7 +183,9 @@
     stopAuto();
     mode = ext.MODES.includes(nextMode) ? nextMode : mode;
     $('game-mode').value = mode;
-    api.newGame(); slots[0].button.focus();
+    api.newGame();
+    if (mode === 'automatic') $('auto-toggle').focus();
+    else slots[0].button.focus();
   }
   $('new-game').addEventListener('click', () => restart());
   $('result-new-game').addEventListener('click', () => restart());
@@ -227,7 +231,7 @@
     $('mode-description').textContent = {
       classic:'Classique : à vous de déduire le code, sans aide.',
       assisted:'Assisté : vous jouez et pouvez demander une déduction à partir des indices.',
-      automatic:'Automatique : observez un algorithme local jouer, pas à pas ou en continu.'
+      automatic:'Automatique : cliquez sur « Démarrer la démonstration » ci-dessous pour lancer le joueur.'
     }[mode];
     for (const id of ['get-hint','auto-step','auto-toggle']) $(id).disabled = state.status !== 'playing';
   }

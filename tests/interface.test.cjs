@@ -203,3 +203,14 @@ test('statistiques/historique visibles, séparés et rechargeables ; effacement 
   ui['clear-records'].click();assert.equal(JSON.parse(storage.getItem(extensions.STORAGE_KEY)).length,0);
   assert.equal(ui['game-archive'].children.length,0);
 });
+
+test('automatique : le démarrage reçoit le focus et la consigne indique les commandes',()=>{
+  const {elements:e,api}=setup();
+  chooseMode(e,'automatic');
+  assert.equal(e['auto-toggle'].focused,true);
+  assert.match(e.status.textContent,/Démarrer la démonstration/);
+  assert.match(e['mode-description'].textContent,/ci-dessous/);
+  assert.equal(api.getState().attemptsUsed,0);
+  e['auto-toggle'].click();
+  assert.equal(api.getState().attemptsUsed,1);
+});

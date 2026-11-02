@@ -1,6 +1,6 @@
 # Chromatique — Le code secret
 
-**Version 1.1.0 · Règles `code-couleurs-1.0` · API provisoire `provisional-1`.**
+**Version 1.1.1 · Règles `code-couleurs-1.0` · API provisoire `provisional-1`.**
 
 Un jeu solo inspiré du Mastermind, sans dépendance, compte, suivi, serveur applicatif ni service d’IA intégré. Les couleurs sont toujours accompagnées d’un nom ou d’un symbole.
 
@@ -29,6 +29,10 @@ Chaque ligne de l’historique affiche « Bien placées » et « Mal placées »
 Après au moins un essai valide dans une partie encore en cours, les boutons de redémarrage demandent « Abandonner cette partie et recommencer ? ». Annuler conserve la partie, les indices, la proposition en cours et la sélection. Après une fin de partie ou avant le premier essai valide, le redémarrage est immédiat. L’API de test garde son redémarrage direct, sans dialogue.
 
 Vérification de cette version : 25 tests automatiques (14 moteur/API et 11 avec DOM simulé), dont les libellés, la sélection, les titres et les deux réponses à la confirmation. La suite de navigateur a aussi été complétée, mais son exécution dans un navigateur réel reste à effectuer.
+
+## Correction de la version 1.1.1
+
+Les commandes automatiques sont maintenant placées juste sous le choix du mode, avant la zone de saisie. Le focus arrive sur « Démarrer la démonstration » et la consigne explique comment lancer la partie. Le test navigateur contrôle aussi ce placement, le coup unique, la pause, la reprise et les commandes tactiles. Les 38 tests locaux passent ; la vérification Chromium est exécutée par GitHub avant publication.
 
 ## Extensions (version 1.1.0)
 
