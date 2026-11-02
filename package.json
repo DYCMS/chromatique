@@ -1,0 +1,8 @@
+{
+  "name": "chromatique-code-secret",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Jeu pédagogique de code secret en couleurs, sans dépendance",
+  "scripts": { "test": "node --test tests/*.test.cjs" },
+  "engines": { "node": ">=18" }
+}
