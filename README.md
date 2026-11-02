@@ -1,6 +1,6 @@
 # Chromatique — Le code secret
 
-**Version 1.0.1 · Règles `code-couleurs-1.0` · API provisoire `provisional-1`.**
+**Version 1.0.2 · Règles `code-couleurs-1.0` · API provisoire `provisional-1`.**
 
 Un jeu solo inspiré du Mastermind, sans dépendance, compte, suivi, serveur applicatif ni service d’IA intégré. Les couleurs sont toujours accompagnées d’un nom ou d’un symbole.
 
@@ -21,6 +21,14 @@ Aucune installation de paquet n’est nécessaire pour ces tests. `game.js` cont
 ## Message de fin (version 1.0.1)
 
 Un encadré affiche **Victoire !** avec le nombre d’essais, ou **Partie perdue** après dix propositions incorrectes. À la fin, le focus et la vue se déplacent sur cet encadré, qui propose aussi Nouvelle partie. Le redémarrage masque le résultat et efface son texte. Les tests d’interface vérifient son apparition, le blocage des propositions et sa disparition au redémarrage avec un DOM simulé.
+
+## Lisibilité et redémarrage (version 1.0.2)
+
+Chaque ligne de l’historique affiche « Bien placées » et « Mal placées » sous ses nombres. Une consigne indique la case sélectionnée et suit les clics sur la palette ou les cases et le focus des listes. Le titre du secret devient « Code trouvé ! » après une victoire, ou « Le code secret était… » après une défaite.
+
+Après au moins un essai valide dans une partie encore en cours, les boutons de redémarrage demandent « Abandonner cette partie et recommencer ? ». Annuler conserve la partie, les indices, la proposition en cours et la sélection. Après une fin de partie ou avant le premier essai valide, le redémarrage est immédiat. L’API de test garde son redémarrage direct, sans dialogue.
+
+Vérification de cette version : 25 tests automatiques (14 moteur/API et 11 avec DOM simulé), dont les libellés, la sélection, les titres et les deux réponses à la confirmation. La suite de navigateur a aussi été complétée, mais son exécution dans un navigateur réel reste à effectuer.
 
 ## Règles et source
 

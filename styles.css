@@ -65,7 +65,7 @@ legend { font-size:11px; line-height:1.6; margin-bottom:10px; }
 .row-number { color:var(--muted); font-size:9px; width:15px; }
 .feedback { display:flex; gap:7px; align-items:center; }
 .feedback span { min-width:24px; height:26px; border-radius:6px; display:grid; place-items:center; background:#e9eddc; color:var(--ink); font-size:12px; font-weight:700; }
-.feedback span:last-child { background:#f5ebd9; }
+.feedback-item:last-child .feedback-number { background:#f5ebd9; }
 .history-note { margin:17px 0 0; }
 .rules-panel { padding:20px 4px 0 10px; }
 .rules-panel .eyebrow { color:var(--muted); margin-bottom:12px; }
@@ -100,3 +100,10 @@ footer { display:flex; justify-content:space-between; gap:12px; border-top:1px s
   .result-copy>p:last-child { font-size:13px; }
   .result-banner>.primary { width:100%; }
 }
+
+/* Les nombres et leurs libellés restent associés, même sur une petite largeur. */
+.feedback-item { display:flex; flex-direction:column; align-items:center; gap:5px; min-width:64px; }
+.feedback-item small { font-size:10px; line-height:1.4; color:var(--muted); white-space:nowrap; }
+.history-row { flex-wrap:wrap; row-gap:12px; }
+.feedback { margin-left:auto; }
+#palette-prompt { font-weight:700; color:var(--ink); }

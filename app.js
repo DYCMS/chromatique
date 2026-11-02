@@ -81,6 +81,7 @@
       slot.select.value = draft[i];
       slot.select.disabled = ended; slot.button.disabled = ended;
     });
+    $('palette-prompt').textContent = ended ? 'Partie terminée — lancez une nouvelle partie pour rejouer.' : `Choisissez la couleur de la case ${selected + 1}`;
     $('palette-fieldset').disabled = ended;
     $('validate').disabled = ended;
   }
@@ -95,7 +96,14 @@
       const feedback = document.createElement('div'); feedback.className = 'feedback';
       const good = document.createElement('span'); good.textContent = row.wellPlaced; good.title = 'Bien placées'; good.setAttribute('aria-label', `${row.wellPlaced} bien placées`);
       const other = document.createElement('span'); other.textContent = row.misplaced; other.title = 'Mal placées'; other.setAttribute('aria-label', `${row.misplaced} mal placées`);
-      feedback.append(good, other); li.append(group, feedback); $('history').append(li);
+      good.className = 'feedback-number'; other.className = 'feedback-number';
+      function labeledFeedback(number, text) {
+        const item = document.createElement('div'); item.className = 'feedback-item';
+        const label = document.createElement('small'); label.textContent = text;
+        item.append(number, label); return item;
+      }
+      feedback.append(labeledFeedback(good, 'Bien placées'), labeledFeedback(other, 'Mal placées'));
+      li.append(group, feedback); $('history').append(li);
     });
     $('empty-history').hidden = state.attemptsUsed !== 0;
     $('history-count').textContent = `${state.attemptsUsed} / 10`;
@@ -118,6 +126,7 @@
       const last = state.history[state.history.length - 1];
       $('status').textContent = `Essai ${last.attempt} : ${last.wellPlaced} bien placées, ${last.misplaced} mal placées. ${state.attemptsRemaining} essai${state.attemptsRemaining > 1 ? 's' : ''} restant${state.attemptsRemaining > 1 ? 's' : ''}.`;
     }
+    $('secret-title').textContent = state.status === 'won' ? 'Code trouvé !' : state.status === 'lost' ? 'Le code secret était…' : 'Le code à découvrir';
     $('secret').replaceChildren();
     if (state.secret) {
       state.secret.forEach(color => $('secret').append(peg(color)));
@@ -149,7 +158,12 @@
     const result = api.submit([...draft]);
     if (!result.ok) $('error').textContent = result.error;
   });
-  function restart() { api.newGame(); slots[0].button.focus(); }
+  function restart() {
+    const state = api.getState();
+    if (state.status === 'playing' && state.attemptsUsed > 0 &&
+        !window.confirm('Abandonner cette partie et recommencer ?')) return;
+    api.newGame(); slots[0].button.focus();
+  }
   $('new-game').addEventListener('click', restart);
   $('result-new-game').addEventListener('click', restart);
   $('test-banner').hidden = !testMode;

@@ -12,11 +12,11 @@
 </head>
 <body>
   <a class="skip-link" href="#proposal">Aller à ma proposition</a>
-  <header class="site-header"><a class="brand" href="./index.html" aria-label="Chromatique, accueil"><span class="brand-icon" aria-hidden="true">◈</span> CHROMATIQUE</a><span class="edition">LE CODE SECRET · v1.0.1</span></header>
+  <header class="site-header"><a class="brand" href="./index.html" aria-label="Chromatique, accueil"><span class="brand-icon" aria-hidden="true">◈</span> CHROMATIQUE</a><span class="edition">LE CODE SECRET · v1.0.2</span></header>
   <main>
     <section class="intro" aria-labelledby="title">
       <div><p class="eyebrow">Un peu de couleur. Beaucoup de logique.</p><h1 id="title">À vous de<br><em>percer le code.</em></h1><p class="intro-copy">Quatre couleurs cachées. Dix essais pour les retrouver.<br>Observez les indices, ajustez, et faites la lumière.</p></div>
-      <div class="secret-card"><span class="eyebrow">Le code à découvrir</span><div id="secret" class="secret-pegs" aria-label="Code secret caché"><span>?</span><span>?</span><span>?</span><span>?</span></div><span id="secret-caption">Les répétitions sont possibles.</span></div>
+      <div class="secret-card"><span id="secret-title" class="eyebrow">Le code à découvrir</span><div id="secret" class="secret-pegs" aria-label="Code secret caché"><span>?</span><span>?</span><span>?</span><span>?</span></div><span id="secret-caption">Les répétitions sont possibles.</span></div>
     </section>
     <p id="test-banner" class="test-banner" hidden>Mode de test actif : un secret peut être imposé par l’API provisoire.</p>
     <section id="result" class="result-banner" aria-labelledby="result-title" tabindex="-1" hidden>
@@ -30,7 +30,7 @@
         <p id="status" class="status" role="status" aria-live="polite" aria-atomic="true">Choisissez vos quatre couleurs.</p>
         <form id="proposal" novalidate>
           <div class="slots" id="slots"></div>
-          <fieldset id="palette-fieldset"><legend>Choisissez une couleur pour la case sélectionnée</legend><div class="palette" id="palette"></div></fieldset>
+          <fieldset id="palette-fieldset"><legend id="palette-prompt" aria-live="polite" aria-atomic="true">Choisissez la couleur de la case 1</legend><div class="palette" id="palette"></div></fieldset>
           <p class="input-tip">Une couleur peut apparaître plusieurs fois. Modifiez une case en la sélectionnant.</p>
           <p id="error" class="error" role="alert" aria-atomic="true"></p>
           <button class="primary" id="validate" type="submit">Valider ma proposition <span aria-hidden="true">↗</span></button>

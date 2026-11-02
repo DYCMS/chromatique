@@ -28,16 +28,17 @@ class Element {
   click(){if(!this.disabled)this.dispatch('click');}
   focus(){this.focused=true;this.dispatch('focus');}
 }
-function setup(testMode=true){
+function setup(testMode=true, { confirmAnswer=true }={}){
   const html=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8');
   const elements={}; for(const match of html.matchAll(/<([a-z0-9-]+)[^>]*\bid="([^"]+)"/gi))elements[match[2]]=new Element(match[1]);
   const document={getElementById:id=>elements[id],createElement:tag=>new Element(tag),createTextNode:text=>Object.assign(new Element('#text'),{textContent:text})};
-  const window={};
+  const confirmations=[];
+  const window={confirm:message=>{confirmations.push(message);return confirmAnswer;}};
   vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../app.js'),'utf8'),{document,window,CodeSecretEngine:engine,URLSearchParams,location:{search:testMode?'?test=1':''}});
   const api=window.codeSecret;
   const fill=guess=>guess.forEach((value,i)=>{const select=elements.slots.children[i].children[2];select.value=value;select.dispatch('change');});
   const submit=()=>elements.proposal.dispatch('submit');
-  return {elements,api,fill,submit};
+  return {elements,api,fill,submit,confirmations};
 }
 const secret=['rouge','bleu','vert','jaune'];
 const wrong=Array(4).fill('violet');
@@ -99,4 +100,61 @@ test('interface : défaite après dix propositions puis nouvelle partie complèt
 test('interface : mode normal sans bandeau et sans secret imposé',()=>{
   const {elements:e,api}=setup(false);assert.equal(e['test-banner'].hidden,true);
   assert.equal(api.newGame({secret}).ok,false);assert.equal(api.getState().secret,null);
+});
+
+test('interface : consigne de case dynamique et libellés des deux indices visibles',()=>{
+  const {elements:e,api,fill,submit}=setup();api.newGame({secret});
+  assert.equal(e['palette-prompt'].textContent,'Choisissez la couleur de la case 1');
+  e.palette.children[0].click();
+  assert.equal(e['palette-prompt'].textContent,'Choisissez la couleur de la case 2');
+  e.slots.children[3].children[1].click();
+  assert.equal(e['palette-prompt'].textContent,'Choisissez la couleur de la case 4');
+  e.slots.children[1].children[2].focus();
+  assert.equal(e['palette-prompt'].textContent,'Choisissez la couleur de la case 2');
+  fill(['rouge','vert','bleu','orange']);submit();
+  const feedback=e.history.children[0].children[1];
+  assert.equal(feedback.children[0].children[0].textContent,'1');
+  assert.equal(feedback.children[0].children[1].textContent,'Bien placées');
+  assert.equal(feedback.children[1].children[0].textContent,'2');
+  assert.equal(feedback.children[1].children[1].textContent,'Mal placées');
+  assert.equal(e['palette-prompt'].textContent,'Choisissez la couleur de la case 1');
+});
+test('interface : titre adapté à la victoire, à la défaite et au redémarrage',()=>{
+  const {elements:e,api,confirmations}=setup();
+  assert.equal(e['secret-title'].textContent,'Le code à découvrir');
+  api.newGame({secret});api.submit(secret);
+  assert.equal(e['secret-title'].textContent,'Code trouvé !');
+  e['result-new-game'].click();
+  assert.equal(e['secret-title'].textContent,'Le code à découvrir');
+  api.newGame({secret});for(let i=0;i<10;i++)api.submit(wrong);
+  assert.equal(e['secret-title'].textContent,'Le code secret était…');
+  assert.match(e['palette-prompt'].textContent,/Partie terminée/);
+  e['new-game'].click();
+  assert.equal(e['secret-title'].textContent,'Le code à découvrir');
+  assert.equal(confirmations.length,0);
+});
+test('interface : annuler un abandon conserve état, saisie, indices et sélection',()=>{
+  const {elements:e,api,fill,submit,confirmations}=setup(true,{confirmAnswer:false});
+  api.newGame({secret});fill(wrong);submit();fill(['rouge','bleu','','']);
+  e.slots.children[2].children[1].click();
+  const before=api.getState(),history=e.history.textContent,prompt=e['palette-prompt'].textContent;
+  e['new-game'].click();
+  assert.deepEqual(api.getState(),before);
+  assert.equal(e.history.textContent,history);
+  assert.equal(e.slots.children[0].children[2].value,'rouge');
+  assert.equal(e.slots.children[1].children[2].value,'bleu');
+  assert.equal(e['palette-prompt'].textContent,prompt);
+  assert.deepEqual(confirmations,['Abandonner cette partie et recommencer ?']);
+});
+test('interface : confirmer abandonne la partie ; avant le premier essai aucun dialogue',()=>{
+  const {elements:e,api,fill,submit,confirmations}=setup();
+  fill(['rouge','','','']);e['new-game'].click();
+  assert.equal(confirmations.length,0);
+  api.newGame({secret});fill(wrong);submit();e['new-game'].click();
+  assert.equal(confirmations.length,1);
+  assert.equal(api.getState().attemptsUsed,0);
+  assert.equal(e.history.children.length,0);
+  assert.equal(e.secret.textContent,'????');
+  assert.equal(e['palette-prompt'].textContent,'Choisissez la couleur de la case 1');
+  assert.ok(e.slots.children.every(slot=>slot.children[2].value===''));
 });
