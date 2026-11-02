@@ -92,9 +92,9 @@ codeSecret.newGame(); // nouveau tirage aléatoire
 
 **Dépôt :** https://github.com/DYCMS/chromatique
 
-**Adresse GitHub Pages prévue :** https://dycms.github.io/chromatique/
+**Adresse du jeu :** https://dycms.github.io/chromatique/
 
-GitHub est connecté et la source Pages est configurée sur GitHub Actions. Le premier déploiement est en cours de préparation. Le workflow `.github/workflows/pages.yml` lance les tests et ne publie que les quatre fichiers du jeu.
+GitHub est connecté et la source Pages est configurée sur GitHub Actions. Le premier déploiement a réussi le 02/11/2026 ; les tests ont également réussi sur GitHub. L’accès au site depuis un navigateur réel reste à vérifier. Le workflow `.github/workflows/pages.yml` lance les tests et ne publie que les quatre fichiers du jeu.
 
 Les prochains envois sur la branche `main` déclenchent automatiquement les tests et la publication. Les résultats se consultent dans l’onglet **Actions** du dépôt. L’adresse effective est confirmée par le déploiement GitHub Pages. Ne pas publier de conversation, de document personnel, de vidéo ou de clé d’accès.
 
@@ -109,7 +109,8 @@ Le tag `jalon-1` repère cette première version vérifiée mais incomplète ; `
 ## Ce qui reste à faire pour les rendus
 
 - [ ] Fournir le contrat 0.2, adapter l’API et exécuter les tests de conformité sur l’application publiée.
-- [ ] Confirmer la réussite du premier déploiement GitHub Pages et l’ouverture du jeu à l’adresse indiquée.
+- [x] Confirmer la réussite du premier déploiement GitHub Pages.
+- [ ] Ouvrir le jeu à l’adresse indiquée et vérifier son fonctionnement dans un navigateur.
 - [ ] Vérifier l’affichage et le clavier dans un navigateur réel ; exécuter `tests/browser.cjs` si possible.
 - [ ] Essayer sur un téléphone réel : noter l’appareil, le navigateur et le résultat ici.
 - [ ] Essayer le jeu d’un camarade et écrire quelques lignes de retour personnel.
