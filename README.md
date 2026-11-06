@@ -52,12 +52,12 @@ api.getState();
 
 ## Vérifications et correction
 
-**Version 1.2.0, 06/11/2026 : 57 tests locaux réussis.** Les résultats du navigateur et du contrôle sur le site public sont consultables dans [GitHub Actions](https://github.com/DYCMS/chromatique/actions). Leur réussite doit être confirmée pour le commit remis ; les tests locaux seuls ne prouvent pas le fonctionnement de la publication.
+**Version 1.2.0, 06/11/2026 : 57 tests réussis**, localement puis sur GitHub. Les suites Chromium et le contrôle du contrat 0.2 avec l’interface sur l’URL publique ont également réussi. [Preuve du déploiement et des vérifications](https://github.com/DYCMS/chromatique/actions/runs/42201751663), pour le commit `65ca9b2773438708ed489ff83cab73e5360322d4`. Cette observation concerne ces scénarios et cet environnement, sans garantir l’absence de tout défaut.
 
-| Comportement et action | Attendu | Obtenu localement | Preuve |
+| Comportement et action | Attendu | Obtenu | Preuve |
 |---|---|---|---|
 | T01 à T09 du contrat | Indices exacts, 1 essai, statut et historique cohérents | Conforme | `tests/api02.test.cjs` |
-| Secret rouge rouge bleu vert ; proposer rouge bleu rouge vert | 2 bien placées, 2 mal placées, une même partie à l’écran | Conforme avec DOM simulé | `tests/interface.test.cjs` |
+| Secret rouge rouge bleu vert ; proposer rouge bleu rouge vert | 2 bien placées, 2 mal placées, une même partie à l’écran | Conforme en DOM simulé et dans Chromium publié | `tests/interface.test.cjs` |
 | Proposition absente, tableau creux, longueur ou couleur invalide | Premier refus dans l’ordre prescrit, aucun essai consommé | Conforme | `tests/api02.test.cjs` |
 | Démarrage invalide après un refus | Promesse rejetée ; état, même lastError, inchangé | Conforme | `tests/api02.test.cjs` |
 | Neuf erreurs puis le bon code ; dix erreurs | Victoire à 10 ; défaite à 10 ; blocage ensuite | Conforme | `tests/api02.test.cjs` |
