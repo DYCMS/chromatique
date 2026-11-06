@@ -65,7 +65,7 @@ api.getState();
 
 La suite `tests/api02-browser.cjs` confronte aussi les résultats à l’écran : T01 à T09, saisie manuelle relue via l’API, refus visibles, démarrage invalide sans changement du DOM, victoire, défaite, redémarrage, absence de révélation et absence de l’API hors mode test. `tests/browser.cjs` conserve les vérifications du clavier, du toucher émulé, de l’aide et de la démonstration automatique.
 
-**Correction avant/après conservée.** En 1.1.1, les boutons automatiques étaient placés sous la saisie, ce qui donnait l’impression que le mode était bloqué. Ils ont été remontés sous le sélecteur, avec une consigne et le focus sur le lancement. [Source avant](https://github.com/DYCMS/chromatique/blob/29f78cddb3293c4f3196784e4998710f40086dce/index.html) ; [source après](https://github.com/DYCMS/chromatique/blob/2d85d825f5b562c34831b49c767bfac8ad68ec17/index.html) ; [vérification réussie](https://github.com/DYCMS/chromatique/actions/runs/41434485862). Le même choix du mode a été vérifié avant et après correction.
+**Correction avant/après conservée.** Avant la correction 1.1.1, les boutons automatiques étaient placés sous la saisie, ce qui donnait l’impression que le mode était bloqué. Ils ont été remontés sous le sélecteur, avec une consigne et le focus sur le lancement. [Source avant](https://github.com/DYCMS/chromatique/blob/29f78cddb3293c4f3196784e4998710f40086dce/index.html) ; [source après](https://github.com/DYCMS/chromatique/blob/2d85d825f5b562c34831b49c767bfac8ad68ec17/index.html) ; [vérification réussie](https://github.com/DYCMS/chromatique/actions/runs/41434485862). Le même choix du mode a été vérifié avant et après correction.
 
 L’intégration 0.2 corrige aussi un écart de l’ancien adaptateur : il ne fournissait pas `codeSecretTest` et démarrait immédiatement une partie en mode test. Le nouvel adaptateur respecte l’état initial imposé ; les tests couvrent cette différence. Un refus au premier essai conserve maintenant la saisie et le chronomètre ; seul le message d’erreur change.
 
@@ -73,7 +73,19 @@ L’intégration 0.2 corrige aussi un écart de l’ancien adaptateur : il ne fo
 
 L’auteur a signalé le 02/11/2026 des essais réussis sur **Huawei P30, modèle ELE-L29, EMUI 12.0.0**, avec **Google, DuckDuckGo et Firefox** : affichage, choix des couleurs, validation, nouvelle partie et mode automatique. Ces essais concernent la version antérieure à l’intégration 0.2 ; ils ne sont pas présentés comme un nouveau test de la version 1.2.0. Les versions des navigateurs et la date exacte des essais n’ont pas été précisées.
 
-Il reste à refaire un essai personnel de cette version sur téléphone, à essayer le jeu d’un camarade pour J2 et à préparer la capsule individuelle de 4 à 5 minutes. Le solveur n’a pas de garantie exhaustive de victoire en dix coups ; une partie en cours n’est pas sauvegardée. Les tests réalisés ne prouvent pas l’absence de tout défaut et ne remplacent pas le contrôle de l’enseignant.
+**Nouvel essai sur la version 1.2.0, rapporté le 06/11/2026.** Sur le même Huawei P30, l’auteur a effectué plusieurs parties. Cas vérifié : dix combinaisons valides sans trouver le code. Attendu : fin de partie après le dixième essai, message « Partie perdue » et proposition de recommencer. Obtenu : résultat attendu observé et possibilité de lancer une nouvelle partie proposée. Le navigateur utilisé pour ce nouvel essai n’a pas été précisé. Ce retour ne permet pas d’affirmer que le bouton a été actionné après cette défaite ; le redémarrage est par ailleurs couvert par les tests automatisés.
+
+## Retour après essai du jeu d’un camarade
+
+**À compléter avant la remise J2 :** lien du jeu essayé et quelques lignes d’observations personnelles après y avoir joué. Le retour d’un camarade sur Chromatique peut aider à améliorer le projet, mais ne remplace pas ce retour personnel sur son jeu. Aucun essai ni avis n’est inventé.
+
+## Limites et état de la remise J2
+
+L’essai sur téléphone décrit ci-dessus est documenté. La capsule individuelle de 4 à 5 minutes est préparée par l’auteur et sera déposée séparément sur Cyberlearn. Son enregistrement et sa remise ne sont pas confirmés ici. Le retour personnel après essai du jeu d’un camarade reste à ajouter.
+
+Le tag `final` est demandé pour figer cette version technique avec son README actuel. Il sera créé par le workflow `tag-final.yml` après réussite des tests. Ce workflow ne remplace jamais un tag existant et ne le déplace pas automatiquement. La documentation de remise devra intégrer le retour personnel avant le dépôt J2 et la cible du tag devra alors être vérifiée.
+
+Le solveur n’a pas de garantie exhaustive de victoire en dix coups ; une partie en cours n’est pas sauvegardée. Les tests réalisés ne prouvent pas l’absence de tout défaut et ne remplacent pas le contrôle de l’enseignant.
 
 ## Remise
 

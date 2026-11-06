@@ -1,0 +1,32 @@
+name: Créer le tag final demandé
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/tag-final.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify-and-tag:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Vérifier la version retenue
+        run: npm test
+      - name: Créer le tag sans remplacer une référence existante
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git show-ref --verify --quiet refs/tags/final; then
+            echo "Le tag final existe déjà et reste inchangé."
+            exit 0
+          fi
+          git tag final "$GITHUB_SHA"
+          git push origin refs/tags/final
