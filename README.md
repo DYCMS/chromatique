@@ -71,9 +71,9 @@ L’intégration 0.2 corrige aussi un écart de l’ancien adaptateur : il ne fo
 
 ## Essai sur téléphone et limites
 
-L’auteur a signalé le 02/11/2026 des essais réussis sur **Huawei P30, modèle ELE-L29, EMUI 12.0.0**, avec **Google, DuckDuckGo et Firefox** : affichage, choix des couleurs, validation, nouvelle partie et mode automatique. Ces essais concernent la version antérieure à l’intégration 0.2 ; ils ne sont pas présentés comme un nouveau test de la version 1.2.0. Les versions des navigateurs et la date exacte des essais n’ont pas été précisées.
+Le 02/11/2026 essais réussis sur **Huawei P30, modèle ELE-L29, EMUI 12.0.0**, avec **Google, DuckDuckGo et Firefox** : affichage, choix des couleurs, validation, nouvelle partie et mode automatique. Ces essais concernent la version antérieure à l’intégration 0.2 ; ils ne sont pas présentés comme un nouveau test de la version 1.2.0. Les versions des navigateurs et la date exacte des essais n’ont pas été précisées.
 
-**Nouvel essai sur la version 1.2.0, rapporté le 06/11/2026.** Sur le même Huawei P30, l’auteur a effectué plusieurs parties. Cas vérifié : dix combinaisons valides sans trouver le code. Attendu : fin de partie après le dixième essai, message « Partie perdue » et proposition de recommencer. Obtenu : résultat attendu observé et possibilité de lancer une nouvelle partie proposée. Le navigateur utilisé pour ce nouvel essai n’a pas été précisé. Ce retour ne permet pas d’affirmer que le bouton a été actionné après cette défaite ; le redémarrage est par ailleurs couvert par les tests automatisés.
+**Nouvel essai sur la version 1.2.0, rapporté le 06/11/2026.** Sur le même Huawei P30, plusieurs parties ont été essayées. Cas vérifié : dix combinaisons valides sans trouver le code. Attendu : fin de partie après le dixième essai, message « Partie perdue » et proposition de recommencer. Obtenu : résultat attendu observé et possibilité de lancer une nouvelle partie proposée. Le navigateur utilisé pour ce nouvel essai n’a pas été précisé. Ce retour ne permet pas d’affirmer que le bouton a été actionné après cette défaite ; le redémarrage est par ailleurs couvert par les tests automatisés.
 
 ## Retour après essai du jeu d’un camarade
 
