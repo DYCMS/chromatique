@@ -9,8 +9,8 @@
     { id:'violet', name:'Violet', symbol:'Vi', color:'#8054a4', on:'#ffffff' }
   ];
   const $ = id => document.getElementById(id);
-  const game = CodeSecretEngine.createGame();
   const testMode = new URLSearchParams(location.search).get('test') === '1';
+  const game = CodeSecretEngine.createGame({autoStart:!testMode, revealSecret:!testMode});
   const api = CodeSecretEngine.bindApi(game, { testMode });
   window.codeSecret = api;
   const ext = CodeSecretExtensions;
@@ -89,7 +89,7 @@
       slot.select.value = draft[i];
       slot.select.disabled = controlsDisabled; slot.button.disabled = controlsDisabled;
     });
-    $('palette-prompt').textContent = ended ? 'Partie terminée — lancez une nouvelle partie pour rejouer.' : `Choisissez la couleur de la case ${selected + 1}`;
+    $('palette-prompt').textContent = ended ? 'Lancez une nouvelle partie pour jouer.' : `Choisissez la couleur de la case ${selected + 1}`;
     $('palette-fieldset').disabled = controlsDisabled;
     $('validate').disabled = controlsDisabled;
     if (mode === 'automatic' && !ended) $('palette-prompt').textContent = 'Le programme compose les propositions dans ce mode.';
@@ -118,6 +118,11 @@
     $('history-count').textContent = `${state.attemptsUsed} / 10`;
   }
   function render(state) {
+    const refusal = game.getContractState().lastError;
+    if (refusal) {
+      if (state.status === 'playing') $('error').textContent = refusal.message;
+      return;
+    }
     tracker.observe(state, mode);
     if (state.attemptsUsed === 0 || state.status !== 'playing') stopAuto();
     hint = null;
@@ -132,9 +137,10 @@
     }
     renderedAttempts = state.attemptsUsed;
     drawHistory(state);
-    $('attempt-label').textContent = state.status === 'playing' ? `Essai ${state.attemptsUsed + 1} / 10` : 'Partie terminée';
-    if (state.status === 'won') $('status').textContent = `Code trouvé ! Vous avez gagné en ${state.attemptsUsed} essai${state.attemptsUsed > 1 ? 's' : ''}.`;
-    else if (state.status === 'lost') $('status').textContent = 'Les dix essais sont écoulés. Le code est dévoilé : retentez votre chance !';
+    $('attempt-label').textContent = state.status === 'not-started' ? 'Partie non démarrée' : state.status === 'playing' ? `Essai ${state.attemptsUsed + 1} / 10` : 'Partie terminée';
+    if (state.status === 'not-started') $('status').textContent = 'Mode test prêt. Démarrez avec Nouvelle partie ou codeSecretTest.startGame().';
+    else if (state.status === 'won') $('status').textContent = `Code trouvé ! Vous avez gagné en ${state.attemptsUsed} essai${state.attemptsUsed > 1 ? 's' : ''}.`;
+    else if (state.status === 'lost') $('status').textContent = testMode ? 'Les dix essais sont écoulés. Partie perdue.' : 'Les dix essais sont écoulés. Le code est dévoilé : retentez votre chance !';
     else if (state.attemptsUsed === 0) $('status').textContent = mode === 'automatic'
       ? 'Cliquez sur « Démarrer la démonstration » ou « Jouer un coup » dans le panneau ci-dessus.'
       : 'Choisissez vos quatre couleurs.';
@@ -142,7 +148,7 @@
       const last = state.history[state.history.length - 1];
       $('status').textContent = `Essai ${last.attempt} : ${last.wellPlaced} bien placées, ${last.misplaced} mal placées. ${state.attemptsRemaining} essai${state.attemptsRemaining > 1 ? 's' : ''} restant${state.attemptsRemaining > 1 ? 's' : ''}.`;
     }
-    $('secret-title').textContent = state.status === 'won' ? 'Code trouvé !' : state.status === 'lost' ? 'Le code secret était…' : 'Le code à découvrir';
+    $('secret-title').textContent = state.status === 'won' ? 'Code trouvé !' : state.status === 'lost' ? (testMode ? 'Code secret caché' : 'Le code secret était…') : 'Le code à découvrir';
     $('secret').replaceChildren();
     if (state.secret) {
       state.secret.forEach(color => $('secret').append(peg(color)));
@@ -154,7 +160,7 @@
       $('secret-caption').textContent = 'Les répétitions sont possibles.';
     }
     updateDraft();
-    const ended = state.status !== 'playing';
+    const ended = ['won','lost'].includes(state.status);
     $('result').hidden = !ended;
     $('result').classList.toggle('victory', state.status === 'won');
     $('result').classList.toggle('defeat', state.status === 'lost');
@@ -162,7 +168,7 @@
     $('result-title').textContent = ended ? (state.status === 'won' ? 'Victoire !' : 'Partie perdue') : '';
     $('result-message').textContent = !ended ? '' : state.status === 'won'
       ? `Bravo ! Vous avez trouvé le code en ${state.attemptsUsed} essai${state.attemptsUsed > 1 ? 's' : ''}. Lancez une nouvelle partie pour rejouer.`
-      : 'Les 10 essais sont écoulés. Le code secret est dévoilé ci-dessus. Lancez une nouvelle partie pour retenter votre chance.';
+      : testMode ? 'Les 10 essais sont écoulés. Lancez une nouvelle partie pour retenter votre chance.' : 'Les 10 essais sont écoulés. Le code secret est dévoilé ci-dessus. Lancez une nouvelle partie pour retenter votre chance.';
     if (ended && previousStatus === 'playing') {
       $('result').focus();
       if (typeof $('result').scrollIntoView === 'function') $('result').scrollIntoView({ block:'center', behavior:'instant' });
@@ -283,4 +289,5 @@
   $('test-banner').hidden = !testMode;
   game.subscribe(render);
   render(api.getState());
+  if (testMode) window.codeSecretTest = CodeSecretEngine.createTestApi(game);
 })();

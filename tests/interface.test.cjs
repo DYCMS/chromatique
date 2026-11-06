@@ -29,7 +29,7 @@ class Element {
   click(){if(!this.disabled)this.dispatch('click');}
   focus(){this.focused=true;this.dispatch('focus');}
 }
-function setup(testMode=true, { confirmAnswer=true, storage=null }={}){
+function setup(testMode=true, { confirmAnswer=true, storage=null, start=true }={}){
   const html=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8');
   const elements={}; for(const match of html.matchAll(/<([a-z0-9-]+)[^>]*\bid="([^"]+)"/gi))elements[match[2]]=new Element(match[1]);
   const document={getElementById:id=>elements[id],createElement:tag=>new Element(tag),createTextNode:text=>Object.assign(new Element('#text'),{textContent:text})};
@@ -38,9 +38,10 @@ function setup(testMode=true, { confirmAnswer=true, storage=null }={}){
   const window={localStorage:storage,confirm:message=>{confirmations.push(message);return confirmAnswer;},setTimeout:fn=>{const id=nextTimer++;pending.set(id,fn);return id;},clearTimeout:id=>pending.delete(id)};
   vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../app.js'),'utf8'),{document,window,CodeSecretEngine:engine,CodeSecretExtensions:extensions,URLSearchParams,location:{search:testMode?'?test=1':''}});
   const api=window.codeSecret;
+  if(testMode && start) api.newGame();
   const fill=guess=>guess.forEach((value,i)=>{const select=elements.slots.children[i].children[2];select.value=value;select.dispatch('change');});
   const submit=()=>elements.proposal.dispatch('submit');
-  return {elements,api,fill,submit,confirmations,pending,runTimer(){const entry=pending.entries().next().value;if(entry){pending.delete(entry[0]);entry[1]();}}};
+  return {elements,api,contract:window.codeSecretTest,fill,submit,confirmations,pending,runTimer(){const entry=pending.entries().next().value;if(entry){pending.delete(entry[0]);entry[1]();}}};
 }
 const secret=['rouge','bleu','vert','jaune'];
 const wrong=Array(4).fill('violet');
@@ -72,7 +73,7 @@ test('interface : les propositions de l’API mettent à jour les mêmes indices
   assert.match(e.history.children[0].attributes['aria-label'],/1 bien placées et 2 mal placées/);
   assert.match(e.status.textContent,/9 essais restants/);
 });
-test('interface : victoire au dixième, résultat, secret révélé et commandes bloquées',()=>{
+test('interface : victoire au dixième, résultat, secret caché en test et commandes bloquées',()=>{
   const {elements:e,api,fill,submit}=setup();api.newGame({secret});
   for(let i=0;i<9;i++){fill(wrong);submit();}fill(secret);submit();
   assert.match(e.status.textContent,/gagné en 10 essais/);assert.equal(e.history.children.length,10);
@@ -80,8 +81,8 @@ test('interface : victoire au dixième, résultat, secret révélé et commandes
   assert.match(e['result-message'].textContent,/trouvé le code en 10 essais/); assert.equal(e.result.focused,true);
   assert.equal(e.validate.disabled,true);assert.equal(e['palette-fieldset'].disabled,true);
   assert.ok(e.slots.children.every(s=>s.children[1].disabled&&s.children[2].disabled));
-  assert.equal(e.secret.children[0].style.getPropertyValue('--color'),'#c73c40');
-  assert.equal(e.secret.attributes['aria-label'],'Code secret : rouge, bleu, vert, jaune');
+  assert.equal(e.secret.textContent,'????');
+  assert.equal(e.secret.attributes['aria-label'],'Code secret caché');
   const before=api.getState();submit();e.palette.children[0].click();assert.deepEqual(api.getState(),before);
   e['result-new-game'].click(); assert.equal(e.result.hidden,true); assert.equal(e['result-title'].textContent,'');
   assert.equal(e['result-message'].textContent,''); assert.equal(api.getState().attemptsUsed,0);
@@ -129,8 +130,8 @@ test('interface : titre adapté à la victoire, à la défaite et au redémarrag
   e['result-new-game'].click();
   assert.equal(e['secret-title'].textContent,'Le code à découvrir');
   api.newGame({secret});for(let i=0;i<10;i++)api.submit(wrong);
-  assert.equal(e['secret-title'].textContent,'Le code secret était…');
-  assert.match(e['palette-prompt'].textContent,/Partie terminée/);
+  assert.equal(e['secret-title'].textContent,'Code secret caché');
+  assert.match(e['palette-prompt'].textContent,/nouvelle partie/);
   e['new-game'].click();
   assert.equal(e['secret-title'].textContent,'Le code à découvrir');
   assert.equal(confirmations.length,0);
@@ -213,4 +214,35 @@ test('automatique : le démarrage reçoit le focus et la consigne indique les co
   assert.equal(api.getState().attemptsUsed,0);
   e['auto-toggle'].click();
   assert.equal(api.getState().attemptsUsed,1);
+});
+
+test('API 0.2 : état initial sans partie et exposition réservée au mode test',()=>{
+ const {elements:e,api,contract}=setup(true,{start:false});
+ assert.equal(contract.version,'0.2');assert.equal(contract.getState().status,'not-started');
+ assert.equal(e.validate.disabled,true);assert.equal(e.result.hidden,true);
+ assert.equal(setup(false).contract,undefined);
+});
+test('API 0.2 : commandes API et saisie visible partagent la partie et les refus',async()=>{
+ const {elements:e,contract,fill,submit}=setup(true,{start:false});
+ await contract.startGame({secret:['rouge','rouge','bleu','vert']});
+ let state=await contract.submitGuess(['rouge','bleu','rouge','vert']);
+ assert.deepEqual(state.lastResult,{wellPlaced:2,misplaced:2});
+ assert.match(e.history.textContent,/Bien placées/);assert.equal(e['history-count'].textContent,'1 / 10');
+ fill(['rouge','rouge','rouge','rouge']);submit();state=contract.getState();
+ assert.equal(state.attempts,2);assert.deepEqual(state.lastResult,{wellPlaced:2,misplaced:0});
+ await contract.submitGuess(['rouge']);assert.match(e.error.textContent,/quatre couleurs/);
+ const before=contract.getState(),text=e.history.textContent,status=e.status.textContent;
+ await assert.rejects(contract.startGame({secret:null}),{code:'invalid-type'});
+ assert.deepEqual(contract.getState(),before);assert.equal(e.history.textContent,text);assert.equal(e.status.textContent,status);
+ e['new-game'].click();assert.equal(contract.getState().attempts,0);assert.equal(contract.getState().lastError,null);
+});
+
+test('un refus au premier essai conserve la saisie et la sélection',async()=>{
+ const {elements:e,contract,fill}=setup();
+ fill(['rouge','bleu','','']);e.slots.children[2].children[1].click();
+ const prompt=e['palette-prompt'].textContent;
+ await contract.submitGuess(['rouge']);
+ assert.equal(e.slots.children[0].children[2].value,'rouge');
+ assert.equal(e.slots.children[1].children[2].value,'bleu');
+ assert.equal(e['palette-prompt'].textContent,prompt);assert.equal(contract.getState().attempts,0);
 });
