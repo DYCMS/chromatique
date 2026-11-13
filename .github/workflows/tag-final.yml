@@ -1,4 +1,4 @@
-name: Créer le tag final demandé
+name: Actualiser le tag final pour la remise J2
 on:
   push:
     branches: [main]
@@ -20,13 +20,20 @@ jobs:
           node-version: '22'
       - name: Vérifier la version retenue
         run: npm test
-      - name: Créer le tag sans remplacer une référence existante
+      - name: Actualiser uniquement le tag final attendu
         shell: bash
+        env:
+          EXPECTED_FINAL: 21d6d76c270f916ab0e0ae137561d3a3c4c39519
         run: |
           set -euo pipefail
-          if git show-ref --verify --quiet refs/tags/final; then
-            echo "Le tag final existe déjà et reste inchangé."
+          actual="$(git rev-parse refs/tags/final)"
+          if [ "$actual" = "$GITHUB_SHA" ]; then
+            echo "Le tag final correspond déjà à cette version."
             exit 0
           fi
-          git tag final "$GITHUB_SHA"
-          git push origin refs/tags/final
+          if [ "$actual" != "$EXPECTED_FINAL" ]; then
+            echo "Le tag final a changé : aucune référence n'est modifiée."
+            exit 1
+          fi
+          git tag -f final "$GITHUB_SHA"
+          git push --force-with-lease="refs/tags/final:$EXPECTED_FINAL" origin refs/tags/final

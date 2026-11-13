@@ -81,9 +81,9 @@ J’ai testé le [jeu de Nathan](https://natlapathai.github.io/code_secret/). Le
 
 ## Limites et état de la remise J2
 
-L’essai sur téléphone décrit ci-dessus est documenté. La capsule individuelle de 4 à 5 minutes est préparée par l’auteur et sera déposée séparément sur Cyberlearn. Son enregistrement et sa remise ne sont pas confirmés ici. Le retour personnel après essai du jeu de Nathan est présenté ci-dessus.
+L’essai sur téléphone décrit ci-dessus est documenté. La capsule individuelle est enregistrée ; la quatrième vidéo transmise dure environ 4 min 06 s. Elle sera déposée séparément sur Cyberlearn. Sa remise sur la plateforme reste à effectuer. Le retour personnel après essai du jeu de Nathan est présenté ci-dessus.
 
-Le tag `final` est demandé pour figer cette version technique avec son README actuel. Il sera créé par le workflow `tag-final.yml` après réussite des tests. Ce workflow ne remplace jamais un tag existant et ne le déplace pas automatiquement. La documentation de remise devra intégrer le retour personnel avant le dépôt J2 et la cible du tag devra alors être vérifiée.
+Le tag [`final`](https://github.com/DYCMS/chromatique/tree/final) identifie la version de remise J2 avec ce README, y compris le retour après essai du jeu de Nathan. Son actualisation du 13/11/2026 est effectuée à la demande de l’auteur par le workflow `tag-final.yml`, après réussite des tests et vérification de l’ancienne cible attendue. Le tag `jalon-1` reste inchangé.
 
 Le solveur n’a pas de garantie exhaustive de victoire en dix coups ; une partie en cours n’est pas sauvegardée. Les tests réalisés ne prouvent pas l’absence de tout défaut et ne remplacent pas le contrôle de l’enseignant.
 
