@@ -77,11 +77,11 @@ Le 02/11/2026 essais réussis sur **Huawei P30, modèle ELE-L29, EMUI 12.0.0**, 
 
 ## Retour après essai du jeu d’un camarade
 
-**À compléter avant la remise J2 :** lien du jeu essayé et quelques lignes d’observations personnelles après y avoir joué. Le retour d’un camarade sur Chromatique peut aider à améliorer le projet, mais ne remplace pas ce retour personnel sur son jeu. Aucun essai ni avis n’est inventé.
+J’ai testé le [jeu de Nathan](https://natlapathai.github.io/code_secret/). Les règles sont claires, et l’historique des propositions ainsi que les indications « bien placée » et « mal placée » aident à trouver la combinaison. Les indices, la limite des dix essais et la remise à zéro fonctionnent correctement. Une petite amélioration serait de passer automatiquement à l’emplacement suivant après avoir choisi une couleur, pour rendre la saisie plus rapide. Mais le jeu est très bien ! :-) Bravo à Nathan !
 
 ## Limites et état de la remise J2
 
-L’essai sur téléphone décrit ci-dessus est documenté. La capsule individuelle de 4 à 5 minutes est préparée par l’auteur et sera déposée séparément sur Cyberlearn. Son enregistrement et sa remise ne sont pas confirmés ici. Le retour personnel après essai du jeu d’un camarade reste à ajouter.
+L’essai sur téléphone décrit ci-dessus est documenté. La capsule individuelle de 4 à 5 minutes est préparée par l’auteur et sera déposée séparément sur Cyberlearn. Son enregistrement et sa remise ne sont pas confirmés ici. Le retour personnel après essai du jeu de Nathan est présenté ci-dessus.
 
 Le tag `final` est demandé pour figer cette version technique avec son README actuel. Il sera créé par le workflow `tag-final.yml` après réussite des tests. Ce workflow ne remplace jamais un tag existant et ne le déplace pas automatiquement. La documentation de remise devra intégrer le retour personnel avant le dépôt J2 et la cible du tag devra alors être vérifiée.
 
