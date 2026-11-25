@@ -28,10 +28,12 @@ jobs:
         run: |
           node tests/browser.cjs
           node tests/api02-browser.cjs
+          node tests/pwa-browser.cjs
       - name: Préparer uniquement les fichiers publics
         run: |
           mkdir -p _site
-          cp index.html styles.css game.js extensions.js app.js _site/
+          cp index.html styles.css game.js extensions.js app.js manifest.webmanifest _site/
+          cp -R icons _site/
           touch _site/.nojekyll
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
@@ -58,4 +60,6 @@ jobs:
       - name: Vérifier le contrat 0.2 et son interface sur GitHub Pages
         env:
           CHROMATIQUE_URL: ${{ steps.deployment.outputs.page_url }}
-        run: node tests/api02-browser.cjs
+        run: |
+          node tests/api02-browser.cjs
+          node tests/pwa-browser.cjs
